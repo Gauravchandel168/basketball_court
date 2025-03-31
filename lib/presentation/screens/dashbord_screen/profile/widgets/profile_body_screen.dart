@@ -18,7 +18,6 @@ class ProfileBodyScreen extends StatefulWidget {
   State<ProfileBodyScreen> createState() => _ProfileBodyScreenState();
 }
 
-
 class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
   TextEditingController firstNameontroller = TextEditingController();
   TextEditingController lastnameController = TextEditingController();
@@ -27,7 +26,6 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
   TextEditingController passwordController = TextEditingController();
 
   String? imgPath = "";
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +54,10 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
           },
         ),
         const SizedBox(height: 60),
+
+
         _textRow(),
+
         const SizedBox(height: 10),
 
         Row(
@@ -77,6 +78,7 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
           ],
         ),
         const SizedBox(height: 10),
+
         Text(
           "Email Address",
           style: GoogleFonts.plusJakartaSans(
@@ -87,6 +89,7 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
             ),
           ),
         ),
+
         const SizedBox(height: 10),
         CustomTextField(
           textController: emailController,
@@ -143,8 +146,8 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
           color: green2EC35FColor,
           text: "Change Password",
           onTap: () {
-            AppRouter.navigatorKey.currentState
-                ?.pushNamed(AppRouter.changePasswordScreen,
+            AppRouter.navigatorKey.currentState?.pushNamed(
+              AppRouter.changePasswordScreen,
             );
           },
         ),
@@ -153,47 +156,50 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
           img: "$svgAssetsBasePath/logout_icon.svg",
           color: redE74C3CColor,
           text: "Logout",
-          onTap: () {  },
+          onTap: () {},
         ),
       ],
     );
   }
+
   _textRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: Text("First Name",
-              style: GoogleFonts.plusJakartaSans(
-                textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: bold,
-                    color: blackFF101010Color),
-              )),
+          child: Text(
+            "First Name",
+            style: GoogleFonts.plusJakartaSans(
+              textStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: bold,
+                color: blackFF101010Color,
+              ),
+            ),
+          ),
         ),
-        const SizedBox(
-          width: 15,
-        ),
+        const SizedBox(width: 15),
         Expanded(
-          child: Text("Last Name",
-              style: GoogleFonts.plusJakartaSans(
-                textStyle: const TextStyle(
-
-                    fontSize: 14,
-                    fontWeight: bold,
-                    color: blackFF101010Color
-                ),
-              )),
-        )
+          child: Text(
+            "Last Name",
+            style: GoogleFonts.plusJakartaSans(
+              textStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: bold,
+                color: blackFF101010Color,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
+
   Widget _iconRow({
     required String img,
     required String text,
     required Color color,
     required Function() onTap,
-
   }) {
     return InkWell(
       onTap: onTap,
@@ -216,40 +222,34 @@ class _ProfileBodyScreenState extends State<ProfileBodyScreen> {
       ),
     );
   }
-  _textFieldRw(
-      {required TextEditingController textController, required String hintText}) {
+
+  _textFieldRw({
+    required TextEditingController textController,
+    required String hintText,
+  }) {
     return TextField(
       controller: textController,
       cursorColor: blackFF101010Color,
       keyboardType: TextInputType.text,
       style: GoogleFonts.plusJakartaSans(
-        textStyle: const TextStyle(
-          fontWeight: normal,
-          fontSize: 14,
-        ),
+        textStyle: const TextStyle(fontWeight: normal, fontSize: 14),
       ),
       decoration: InputDecoration(
         hintText: hintText,
-        border: const OutlineInputBorder(
-
+        border: const OutlineInputBorder(),
+        hintStyle: const TextStyle(fontWeight: normal, fontSize: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 20.0,
         ),
-        hintStyle: const TextStyle(
-          fontWeight: normal,
-          fontSize: 14,
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
-          borderSide: BorderSide(
-            color: greyD6D6D6Color,
-          ),
+          borderSide: BorderSide(color: greyD6D6D6Color),
         ),
         focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            borderSide: BorderSide(
-              color: greyD6D6D6Color,
-            )),
-
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(color: greyD6D6D6Color),
+        ),
       ),
     );
   }
