@@ -38,8 +38,9 @@ class _MyAppState extends State<MyApp> {
     themeMode: ThemeMode.light,
     debugShowCheckedModeBanner: false,
     navigatorKey: AppRouter.navigatorKey,
-    initialRoute: AppRouter.dashBoardScreen,
+    initialRoute: AppRouter.signUp,
     onGenerateRoute: AppRouter.onGenerateRoute,
+
     builder: (context, child) {
       return _responsiveWrapperWidget(child!);
 
@@ -57,7 +58,7 @@ class _MyAppState extends State<MyApp> {
           themeMode: ThemeMode.light,
           debugShowCheckedModeBanner: false,
           navigatorKey: AppRouter.navigatorKey,
-          initialRoute: AppRouter.dashBoardScreen,
+          initialRoute: AppRouter.signUp,
           onGenerateRoute: AppRouter.onGenerateRoute,
           useInheritedMediaQuery: true,
           builder: (context, child) {

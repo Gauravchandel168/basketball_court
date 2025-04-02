@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
+import '../../logic/internet/internet_cubit.dart';
 import '../screens/change_password_screen/change_password_screen.dart';
 import '../screens/dashbord_screen/dash_board_screen.dart';
 import '../screens/dashbord_screen/home_screen/home_screen.dart';
@@ -15,12 +18,14 @@ import '../screens/signUp_screen/signUp_screen.dart';
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static const String dashBoardScreen = "/";
+  static const String signUp = "/";
 
-  static const String logInScreen = "/login";
+  static const String logInScreen = "/logInScreen";
+
+  static const String dashBoardScreen = "/dashBoardScreen";
+
   static const String intro = "/intro";
 
-  static const String signUp = "/signUp";
   static const String forgetPasswordScreen = "/forgetPasswordScreen";
   static const String newPasswordScreen = "/newPasswordScreen";
   static const String changePasswordScreen = "/changePasswordScreen";
@@ -65,7 +70,12 @@ class AppRouter {
   }
 
   static _signUp() {
-    return MaterialPageRoute(builder: (context) => SignupScreen());
+    return MaterialPageRoute(builder: (context) => BlocProvider(
+  create: (context) => SignUpCubit(
+    context.read<InternetCubit>(),
+  ),
+  child: SignupScreen(),
+));
   }
 
   static _forgetPasswordScreen() {

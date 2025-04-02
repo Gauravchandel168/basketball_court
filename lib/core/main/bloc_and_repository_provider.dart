@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // import '../../data/respositories/firebase_cloudStroage_repository.dart';
 
+import '../../logic/internet/internet_cubit.dart';
 import 'app.dart';
 
 class BlocAndRepositoryProvider extends StatelessWidget {
@@ -15,7 +16,7 @@ class BlocAndRepositoryProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-       // BlocProvider<InternetCubit>(create: (context) => InternetCubit()),
+        BlocProvider<InternetCubit>(create: (context) => InternetCubit()),
 
         BlocProvider<NavigationCubit>(create: (context) => NavigationCubit()),
 

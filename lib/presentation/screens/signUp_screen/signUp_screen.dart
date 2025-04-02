@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -7,8 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/colors/app_colors.dart';
 import '../../../core/constants/assets_base_paths.dart';
 import '../../../core/constants/font_weight.dart';
+import '../../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
 import '../../../widgets/common_Elevated_Button.dart';
 import '../../../widgets/custom_textField.dart';
+import '../../../widgets/loading_error_widget.dart';
 import '../../routers/app_routers.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -120,7 +123,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   height: 10,
                 ),
                 CustomTextField(
-                  textController: emailController,
+                  textController: phoneNumberController,
                   hintText: 'Enter your phone number',
                   type: 'number',
                   obsecure: false,
@@ -187,9 +190,54 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(
                   height: 55,
                 ),
-                CommonElevatedButton("Login", () {
-            
-                }),
+                // CommonElevatedButton("Login", () {
+                //
+                // }),
+                BlocListener<SignUpCubit, SignUpState>(
+                  listener: (context, state) {
+
+                    if (state is SignUpLoading) {
+                      showLoading();
+                    } else if (state is SignUpError) {
+                      showError(state.message);
+                    } else if (state is SignUpSuccess) {
+                      hideBothLoadingAndError();
+                      //  AppRouter.navigatorKey.currentState?.pop();
+                      // AppRouter.navigatorKey.currentState
+                      //     ?.pushNamed(AppRouter.logInScreen);
+                    }
+
+                  },
+                  child:
+                  CommonElevatedButton("Login", () {
+                    context.read<SignUpCubit>().signUpMethod(
+                      firstNameontroller.text,
+                      emailController.text,
+                      passwordController.text,
+                      passwordController.text,
+                       num.tryParse(lastnameController.text) ?? 0,
+                       // null, // No image for now
+                    );
+                  }),
+
+                ),
+                BlocListener<SignUpCubit, SignUpState>(
+                  listener: (context, state) {
+                    if (state is SignUpLoading) {
+                      showLoading();
+                     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Loading...")));
+                    } else if (state is SignUpSuccess) {
+                      showError("User found: ${state.user.username}");
+                      //hideBothLoadingAndError();
+                      //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User found: ${state.user.username}")));
+                    } else if (state is SignUpError) {
+                      showError(state.message);
+
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                  },
+                  child: Container(), // Empty container, as BlocListener only listens for state changes
+                ),
                 const SizedBox(
                   height: 25,
                 ),
