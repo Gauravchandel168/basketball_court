@@ -152,8 +152,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       // );
 
       emit(SignUpSuccess(user));// Emit success state
-      print(user.username);
-      print("object");
+
     } catch (e) {
 
       if (e is CustomHttpException) {
@@ -164,7 +163,8 @@ class SignUpCubit extends Cubit<SignUpState> {
         } else {
           emit(SignUpError(e.error));
         }
-      } else {
+      }
+      else {
         emit(SignUpError("Something went wrong. Please try again."));
       }
     }

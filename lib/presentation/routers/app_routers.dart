@@ -1,8 +1,10 @@
+import 'package:basketball/logic/location_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
 import '../../logic/internet/internet_cubit.dart';
+import '../../logic/video_cubit.dart';
 import '../screens/change_password_screen/change_password_screen.dart';
 import '../screens/dashbord_screen/dash_board_screen.dart';
 import '../screens/dashbord_screen/home_screen/home_screen.dart';
@@ -14,13 +16,14 @@ import '../screens/new_app/new_app.dart';
 
 import '../screens/otp/otpScreen.dart';
 import '../screens/signUp_screen/signUp_screen.dart';
+import '../screens/video_call/video_call.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static const String signUp = "/";
+  static const String signUp = "/signUp";
 
-  static const String logInScreen = "/logInScreen";
+  static const String logInScreen = "/";
 
   static const String dashBoardScreen = "/dashBoardScreen";
 
@@ -32,6 +35,10 @@ class AppRouter {
   static const String otpScreen = "/otpScreen";
   static const String homeDetailScreen = "/homeDetailScreen";
   static const String newAppScreen = "/newAppScreen";
+  
+  /// video screen for testing 
+  static const String videoCallScreen = "/videoCallScreen";
+
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -53,6 +60,14 @@ class AppRouter {
         return _homeDetailScreen();
       case newAppScreen:
         return _newAppScreen();
+
+
+    /// video screen for testing
+      case videoCallScreen:
+        return _videoCallScreen(settings.arguments as String);
+        
+        
+        
       default:
         throw Exception("Route was not Found");
     }
@@ -66,7 +81,10 @@ class AppRouter {
   }
 
   static _logInScreen() {
-    return MaterialPageRoute(builder: (context) => LoginScreen());
+    return MaterialPageRoute(builder: (context) => BlocProvider(
+  create: (context) => VideoCubit(),
+  child: LoginScreen(),
+));
   }
 
   static _signUp() {
@@ -97,5 +115,16 @@ class AppRouter {
 
   static _newAppScreen() {
     return MaterialPageRoute(builder: (context) => NewAppScreen());
+  }
+
+
+
+  /// video screen for testing
+
+  static _videoCallScreen(String channelName) {
+    return MaterialPageRoute(builder: (context) => BlocProvider(
+  create: (context) => VideoCubit(),
+  child: VideoCallScreen(channelName:channelName),
+));
   }
 }

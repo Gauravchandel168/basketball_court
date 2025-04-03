@@ -1,4 +1,4 @@
-
+import 'package:basketball/logic/location_cubit.dart';
 import 'package:basketball/presentation/screens/dashbord_screen/profile/profile_screen.dart';
 import 'package:basketball/presentation/screens/dashbord_screen/up_coming_games/upcoming_games.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 //import 'package:flutter_bloc/flutter_bloc.dart';
 //import 'package:flutter_svg/svg.dart';
 
@@ -20,8 +21,9 @@ import 'home_screen/home_header_widget.dart';
 import 'home_screen/home_header_widget.dart';
 import 'home_screen/home_screen.dart';
 import 'my_games_screen/my_games_screen.dart';
+
 class DashBoardScreen extends StatefulWidget {
-   DashBoardScreen({super.key});
+  DashBoardScreen({super.key});
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
@@ -31,7 +33,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List<bool> selectedValue = [true, false, false, false];
   List<Widget> widgetList = [
-    HomeScreen(),
+    BlocProvider(
+      create: (context) => LocationCubit(),
+      child: HomeScreen(),
+    ),
     UpcomingGamesScreen(),
     MyGamesScreen(),
     ProfileScreen(),
@@ -46,7 +51,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       onWillPop: () async =>
       await false,
       child: Scaffold(
-       // backgroundColor: Colors.transparent,
+        // backgroundColor: Colors.transparent,
 
         body: SafeArea(
           bottom: false,
