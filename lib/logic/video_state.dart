@@ -15,6 +15,11 @@ class VideoConnected extends VideoState {
   VideoConnected({required this.uid, required this.localUid});
 }
 
+class VideoConnecting extends VideoState {
+
+  VideoConnecting();
+}
+
 class VideoMuted extends VideoState {
   final bool isMuted;
   VideoMuted(this.isMuted);
@@ -31,3 +36,8 @@ class VideoError extends VideoState {
   final String message;
   VideoError(this.message);
 }
+class CallDurationUpdated extends VideoState {
+  final String duration;
+  CallDurationUpdated({required this.duration});
+}
+
