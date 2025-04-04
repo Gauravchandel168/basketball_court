@@ -14,7 +14,7 @@ appLightTheme(BuildContext context) {
     appBarTheme: Theme.of(context).appBarTheme.copyWith(
         color: whiteFFFFFFColor,
         systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: whiteFFFFFFColor,
+            statusBarColor: purple4C4DDCColor,
             statusBarIconBrightness: Brightness.light),
         iconTheme: const IconThemeData(color: Colors.black, size: 28),
         centerTitle: true,
@@ -23,7 +23,8 @@ appLightTheme(BuildContext context) {
             fontSize: 19,
             fontWeight: normal,
             fontFamily: GoogleFonts.inter().fontFamily)),
-    visualDensity: VisualDensity.adaptivePlatformDensity, colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(Colors.white)).copyWith(background: whiteFFFFFFColor),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: createMaterialColor(Colors.white)).copyWith(background: whiteFFFFFFColor),
   );
 }
 

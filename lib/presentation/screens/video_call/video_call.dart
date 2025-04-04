@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 
 import '../../../logic/video_cubit.dart';
+import '../../../widgets/common_appBar.dart';
 
 class VideoCallScreen extends StatefulWidget {
   final String channelName;
@@ -15,231 +16,342 @@ class VideoCallScreen extends StatefulWidget {
 }
 
 class _VideoCallScreenState extends State<VideoCallScreen> {
-
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   context.read<VideoCubit>().leaveCall();
+  // }
   @override
   void initState() {
     super.initState();
-    context.read<VideoCubit>().initialize();
+    context.read<VideoCubit>().initialize(channelName: widget.channelName);
   }
 
   @override
   Widget build(BuildContext context) {
+    final videoState = context.watch<VideoCubit>().state;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: BlocBuilder<VideoCubit, VideoState>(
-        builder: (context, state) {
-          final videoCubit = context.read<VideoCubit>();
+      appBar: CommonAppbar(text: 'Agora Video Call'),
 
-          return Stack(
-            children: [
-              // If a remote user has joined, render their video, else display a waiting message
-              //main video call screen
-              state is VideoConnected
-                  ? AgoraVideoView(
-                    controller: VideoViewController.remote(
-                      rtcEngine: context.read<VideoCubit>().engine,
-                      //  rtcEngine: videoCubit.engine,
-                      canvas: VideoCanvas(uid: state.uid),
-                      connection: RtcConnection(),
-                    ),
-                  )
-                  // Displays the local user's video view using the Agora engine.
-                  : Center(
-                    child: Text(
-                      "Waiting for user...",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-
-              Positioned(
-                top: 40,
-                left: 20,
-                child: Center(
-                  child: Container(
-                    width: 100,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: whiteFFFFFFColor, width: 2),
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                    child:
-                        // state is VideoInitialized && context.read<VideoCubit>().localVideoController != null
-                        // ? AgoraVideoView(controller:context.read<VideoCubit>().localVideoController!)
-                        //     : const Center(child: CircularProgressIndicator()),
-                        (state is VideoInitialized ||
-                                    state is VideoLocalJoined) &&
-                                videoCubit.localVideoController != null
-                            ?
-                            // AgoraVideoView(controller: videoCubit.localVideoController!,)
-                            ///new
-                            InkWell(
-                              onTap: () {
-                                // context.read<VideoCubit>().switchCamera;
-                              },
-                              child: AgoraVideoView(
-                                controller: VideoViewController(
-                                  rtcEngine:
-                                      context
-                                          .read<VideoCubit>()
-                                          .engine, // Uses the Agora engine instance
-                                  canvas: const VideoCanvas(
-                                    uid: 0, // Specifies the local user
-                                    renderMode:
-                                        RenderModeType
-                                            .renderModeHidden, // Sets the video rendering mode
-                                  ),
-                                ),
-                              ),
-                            )
-                            : const Center(child: CircularProgressIndicator()),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 30,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildIcon(
-                      Icons.mic_off,
-                      Icons.mic,
-                      state is VideoMuted && state.isMuted,
-                      context.read<VideoCubit>().toggleMute,
-                    ),
-                    SizedBox(width: 20),
-                    _buildIcon(
-                      Icons.switch_camera,
-                      Icons.switch_camera,
-                      false,
-                      context.read<VideoCubit>().switchCamera,
-                    ),
-                    SizedBox(width: 20),
-                    _buildIcon(Icons.call_end, Icons.call_end, false, () {
-                      context.read<VideoCubit>().leaveCall();
-                      Navigator.pop(context);
-                    }, color: Colors.red),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<VideoCubit>().joinCall(
-            channelName: widget.channelName
+      body: SafeArea(
+        child: Stack(
+          children: [
+            _buildRemoteView(videoState),
+            _buildLocalView(videoState),
+            _buildControls(videoState),
+          ],
         ),
-       // shape: CircleBorder(),
-       // backgroundColor: green2EC35FColor,
-        backgroundColor:  Colors.grey[800],
+      ),
+      floatingActionButton: FloatingActionButton(
+        // onPressed: () => context.read<VideoCubit>().joinCall(
+        //     channelName: widget.channelName
+        // ),
+        // shape: CircleBorder(),
+        // backgroundColor: green2EC35FColor,
+        backgroundColor: Colors.grey[800],
 
-        child: Icon(size: 38, Icons.video_camera_front_sharp,
-            color: green2EC35FColor),
+        onPressed: () {},
+        child: Icon(
+          size: 38,
+          Icons.video_camera_front_sharp,
+          color: green2EC35FColor,
+        ),
       ),
     );
   }
 
-  Widget _buildIcon(
-    IconData iconOff,
-    IconData iconOn,
-    bool isActive,
-    VoidCallback onPressed, {
-    Color? color,
+  Widget _buildRemoteView(VideoState state) {
+    if (state is VideoConnected) {
+      return AgoraVideoView(
+        controller: VideoViewController.remote(
+          rtcEngine: context.read<VideoCubit>().engine,
+          canvas: VideoCanvas(uid: state.uid),
+          connection: RtcConnection(
+            channelId: widget.channelName,
+            localUid: state.localUid,
+          ),
+        ),
+      );
+    } else {
+      return const Center(
+        child: Text(
+          "Waiting for user...",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      );
+    }
+  }
+
+  Widget _buildLocalView(VideoState state) {
+    if (state is VideoLocalJoined) {
+      return Positioned(
+        top:20,
+        left: 20,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: whiteFFFFFFColor, width: 2),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          width: 120,
+          height: 160,
+          child: AgoraVideoView(
+            controller: VideoViewController(
+              rtcEngine: context.read<VideoCubit>().engine,
+              canvas: const VideoCanvas(uid: 0),
+            ),
+          ),
+        ),
+      );
+    } else {
+      // return const SizedBox();
+      return Positioned(
+        top:20,
+        left: 20,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: whiteFFFFFFColor, width: 2),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          width: 120,
+          height: 160,
+          child: Center(
+            child: CircularProgressIndicator()
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildControls(VideoState state) {
+    final isMuted = state is VideoMuted && state.isMuted;
+
+    return Positioned(
+      bottom: 30,
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _controlButton(
+            iconOn: Icons.mic,
+            iconOff: Icons.mic_off,
+            isToggled: isMuted,
+            onTap: context.read<VideoCubit>().toggleMute,
+          ),
+          const SizedBox(width: 20),
+          _controlButton(
+            iconOn: Icons.switch_camera,
+            iconOff: Icons.switch_camera,
+            isToggled: false,
+            onTap: context.read<VideoCubit>().switchCamera,
+          ),
+          const SizedBox(width: 20),
+          _controlButton(
+            iconOn: Icons.call_end,
+            iconOff: Icons.call_end,
+            isToggled: false,
+            onTap: () {
+              context.read<VideoCubit>().leaveCall();
+              Navigator.pop(context);
+            },
+            backgroundColor: Colors.red,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _controlButton({
+    required IconData iconOn,
+    required IconData iconOff,
+    required bool isToggled,
+    required VoidCallback onTap,
+    Color? backgroundColor,
   }) {
     return FloatingActionButton(
-      backgroundColor: color ?? Colors.grey[800],
-      child: Icon(isActive ? iconOff : iconOn, color: Colors.white),
-      onPressed: onPressed,
+      backgroundColor: backgroundColor ?? Colors.grey[800],
+      onPressed: onTap,
+      child: Icon(isToggled ? iconOff : iconOn, color: Colors.white),
     );
   }
 }
-// import 'package:flutter/material.dart';
-// import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'cubit/video_cubit.dart';
-// import 'cubit/video_state.dart';
-//
-// class VideoCallScreen extends StatefulWidget {
-//   final String channelName;
-//
-//   VideoCallScreen({required this.channelName});
-//
-//   @override
-//   _VideoCallScreenState createState() => _VideoCallScreenState();
-// }
-//
-// class _VideoCallScreenState extends State<VideoCallScreen> {
-//   final String appId = "YOUR_APP_ID";  // Replace with your Agora App ID
-//   final String token = "YOUR_TEMPORARY_TOKEN";  // Replace with a valid token
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     context.read<VideoCubit>().initializeAgora(appId, widget.channelName, token);
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.black,
-//       body: BlocBuilder<VideoCubit, VideoState>(
+
+///body: BlocBuilder<VideoCubit, VideoState>(
 //         builder: (context, state) {
-//           final videoCubit = context.read<VideoCubit>();
+//          // final videoCubit = context.read<VideoCubit>();
 //
-//           return Stack(
-//             children: [
-//               state is VideoConnected
-//                   ? AgoraVideoView(
-//                 controller: VideoViewController.remote(
-//                   rtcEngine: videoCubit._engine,
-//                   canvas: VideoCanvas(uid: state.uid),
-//                 ),
-//               )
-//                   : Center(
-//                 child: Text(
-//                   "Waiting for user...",
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//               ),
-//               Positioned(
-//                 bottom: 20,
-//                 left: 20,
-//                 child: Container(
-//                   width: 100,
-//                   height: 150,
-//                   child: AgoraVideoView(
-//                     controller: VideoViewController(
-//                       rtcEngine: videoCubit._engine,
-//                       canvas: VideoCanvas(uid: 0),
-//                     ),
+//           return SafeArea(
+//             child: Stack(
+//               children: [
+//                 _listofCamera(videoState),
+//                 // state is VideoConnected
+//                 //
+//                 //     ? AgoraVideoView(
+//                 //
+//                 //       controller: VideoViewController.remote(
+//                 //         rtcEngine: context.read<VideoCubit>().engine,
+//                 //         //  rtcEngine: videoCubit.engine,
+//                 //         canvas: VideoCanvas(uid: state.uid),
+//                 //         connection: RtcConnection(
+//                 //           channelId: widget.channelName,
+//                 //           localUid: state.localUid,
+//                 //         ),
+//                 //       ),
+//                 //     )
+//                 //
+//                 //     // Displays the local user's video view using the Agora engine.
+//                 //     : Center(
+//                 //       child: Text(
+//                 //         "Waiting for user...",
+//                 //         style: TextStyle(color: Colors.white),
+//                 //       ),
+//                 //     ),
+//                 //
+//                 // Positioned(
+//                 //   top: 40,
+//                 //   left: 20,
+//                 //   child: Center(
+//                 //     child: Container(
+//                 //       width: 100,
+//                 //       height: 150,
+//                 //       decoration: BoxDecoration(
+//                 //         border: Border.all(color: whiteFFFFFFColor, width: 2),
+//                 //         borderRadius: BorderRadius.all(Radius.circular(12)),
+//                 //       ),
+//                 //       child:
+//                 //           // state is VideoInitialized && context.read<VideoCubit>().localVideoController != null
+//                 //           // ? AgoraVideoView(controller:context.read<VideoCubit>().localVideoController!)
+//                 //           //     : const Center(child: CircularProgressIndicator()),
+//                 //           (state is VideoInitialized ||
+//                 //                       state is VideoLocalJoined)
+//                 //              // && videoCubit.localVideoController != null
+//                 //               ?
+//                 //               // AgoraVideoView(controller: videoCubit.localVideoController!,)
+//                 //              //  AgoraVideoView(controller:context.read<VideoCubit>().localVideoController!)
+//                 //               ///new
+//                 //               InkWell(
+//                 //                 onTap: () {
+//                 //                   // context.read<VideoCubit>().switchCamera;
+//                 //                 },
+//                 //                 child: AgoraVideoView(
+//                 //                   controller: VideoViewController(
+//                 //                     rtcEngine:
+//                 //                         context
+//                 //                             .read<VideoCubit>()
+//                 //                             .engine, // Uses the Agora engine instance
+//                 //                     canvas: const VideoCanvas(
+//                 //                       uid: 0,
+//                 //                       // Specifies the local user
+//                 //                    //   renderMode: RenderModeType.renderModeFit,
+//                 //                       // Sets the video rendering mode
+//                 //                     ),
+//                 //                   ),
+//                 //                 ),
+//                 //               )
+//                 //               : const Center(child: CircularProgressIndicator()),
+//                 //     ),
+//                 //   ),
+//                 // ),
+//
+//                 Positioned(
+//                   bottom: 30,
+//                   left: 0,
+//                   right: 0,
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: [
+//                       _buildIcon(
+//                         Icons.mic_off,
+//                         Icons.mic,
+//                         state is VideoMuted && state.isMuted,
+//                         context.read<VideoCubit>().toggleMute,
+//                       ),
+//                       SizedBox(width: 20),
+//                       _buildIcon(
+//                         Icons.switch_camera,
+//                         Icons.switch_camera,
+//                         false,
+//                         context.read<VideoCubit>().switchCamera,
+//                       ),
+//                       SizedBox(width: 20),
+//                       _buildIcon(Icons.call_end, Icons.call_end, false, () {
+//                         context.read<VideoCubit>().leaveCall();
+//                         Navigator.pop(context);
+//                       }, color: Colors.red),
+//                     ],
 //                   ),
 //                 ),
-//               ),
-//               Positioned(
-//                 bottom: 30,
-//                 left: 0,
-//                 right: 0,
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     FloatingActionButton(
-//                       backgroundColor: Colors.grey[800],
-//                       child: Icon(Icons.call_end, color: Colors.red),
-//                       onPressed: () {
-//                         videoCubit.leaveCall();
-//                         Navigator.pop(context);
-//                       },
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
+//               ],
+//             ),
 //           );
 //         },
 //       ),
-//     );
-//   }
-// }
+/// state is VideoConnected
+//                 //
+//                 //     ? AgoraVideoView(
+//                 //
+//                 //       controller: VideoViewController.remote(
+//                 //         rtcEngine: context.read<VideoCubit>().engine,
+//                 //         //  rtcEngine: videoCubit.engine,
+//                 //         canvas: VideoCanvas(uid: state.uid),
+//                 //         connection: RtcConnection(
+//                 //           channelId: widget.channelName,
+//                 //           localUid: state.localUid,
+//                 //         ),
+//                 //       ),
+//                 //     )
+//                 //
+//                 //     // Displays the local user's video view using the Agora engine.
+//                 //     : Center(
+//                 //       child: Text(
+//                 //         "Waiting for user...",
+//                 //         style: TextStyle(color: Colors.white),
+//                 //       ),
+//                 //     ),
+//                 //
+//                 // Positioned(
+//                 //   top: 40,
+//                 //   left: 20,
+//                 //   child: Center(
+//                 //     child: Container(
+//                 //       width: 100,
+//                 //       height: 150,
+//                 //       decoration: BoxDecoration(
+//                 //         border: Border.all(color: whiteFFFFFFColor, width: 2),
+//                 //         borderRadius: BorderRadius.all(Radius.circular(12)),
+//                 //       ),
+//                 //       child:
+//                 //           // state is VideoInitialized && context.read<VideoCubit>().localVideoController != null
+//                 //           // ? AgoraVideoView(controller:context.read<VideoCubit>().localVideoController!)
+//                 //           //     : const Center(child: CircularProgressIndicator()),
+//                 //           (state is VideoInitialized ||
+//                 //                       state is VideoLocalJoined)
+//                 //              // && videoCubit.localVideoController != null
+//                 //               ?
+//                 //               // AgoraVideoView(controller: videoCubit.localVideoController!,)
+//                 //              //  AgoraVideoView(controller:context.read<VideoCubit>().localVideoController!)
+//                 //               ///new
+//                 //               InkWell(
+//                 //                 onTap: () {
+//                 //                   // context.read<VideoCubit>().switchCamera;
+//                 //                 },
+//                 //                 child: AgoraVideoView(
+//                 //                   controller: VideoViewController(
+//                 //                     rtcEngine:
+//                 //                         context
+//                 //                             .read<VideoCubit>()
+//                 //                             .engine, // Uses the Agora engine instance
+//                 //                     canvas: const VideoCanvas(
+//                 //                       uid: 0,
+//                 //                       // Specifies the local user
+//                 //                    //   renderMode: RenderModeType.renderModeFit,
+//                 //                       // Sets the video rendering mode
+//                 //                     ),
+//                 //                   ),
+//                 //                 ),
+//                 //               )
+//                 //               : const Center(child: CircularProgressIndicator()),
+//                 //     ),
+//                 //   ),
+//                 // ),

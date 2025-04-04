@@ -21,8 +21,8 @@ class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: true,
       elevation: 0,
-
-      backgroundColor: whiteFFFFFFColor,
+      actionsPadding: EdgeInsets.zero,
+      backgroundColor: purple4C4DDCColor,
       leading: InkWell(
         onTap: () {
           AppRouter.navigatorKey.currentState?.pop();

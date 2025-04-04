@@ -207,6 +207,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../widgets/common_Elevated_Button.dart';
 import '../../../widgets/custom_textField.dart';
@@ -221,6 +222,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _channelController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    _channelController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,8 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 // int number = int.parse(emailController.text);
 //                   context.read<VideoCubit>().setUserId(number);
 //
-print(_channelController.text);
-print("_channelController.text");
+
+                _requestPermissions();
                 AppRouter.navigatorKey.currentState
                     ?.pushNamed(AppRouter.videoCallScreen,
                     arguments: _channelController.text
@@ -263,5 +271,9 @@ print("_channelController.text");
       ),
     );
   }
+  Future<void> _requestPermissions() async {
+    await [Permission.microphone, Permission.camera].request();
+  }
+
 }
 

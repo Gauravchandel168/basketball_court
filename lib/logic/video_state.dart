@@ -10,7 +10,9 @@ class VideoInCall extends VideoState {}
 
 class VideoConnected extends VideoState {
   final int uid;
-  VideoConnected(this.uid);
+  final int localUid;
+
+  VideoConnected({required this.uid, required this.localUid});
 }
 
 class VideoMuted extends VideoState {
@@ -21,7 +23,11 @@ class VideoMuted extends VideoState {
 class VideoDisconnected extends VideoState {}
 class VideoInitialized extends VideoState {}
 class VideoLocalJoined extends VideoState {
-  final int uid;
-  VideoLocalJoined(this.uid);
+  final int localUid;
+  VideoLocalJoined(this.localUid);
 }
 
+class VideoError extends VideoState {
+  final String message;
+  VideoError(this.message);
+}
