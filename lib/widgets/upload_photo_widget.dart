@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/colors/app_colors.dart';
 import '../../core/constants/font_weight.dart';
 import '../core/constants/assets_base_paths.dart';
+import '../logic/upload_image_cubit/upload_image_cubit.dart';
 import '../presentation/routers/app_routers.dart';
 
 class UploadPhotoWidget extends StatefulWidget {
@@ -34,81 +35,132 @@ class UploadPhotoWidgetState extends State<UploadPhotoWidget> {
   void initState() {
     super.initState();
 
-    //context.read<UploadImageCubit>().init(widget.imgPath);
+    context.read<UploadImageCubit>().init(widget.imgPath);
   }
 
   @override
   Widget build(BuildContext context) {
-   // final state = context.watch<UploadImageCubit>().state;
+    final state = context.watch<UploadImageCubit>().state;
 
-    return
-      // !(state.hasLocalImage)
-      //   ? InkWell(
-      //       onTap: () {
-      //         modelSheet();
-      //       },
-      //       child: Center(
-      //         child: ClipRRect(
-      //           borderRadius: const BorderRadius.all(Radius.circular(80)),
-      //           child: Image.network(
-      //             fit: BoxFit.fill,
-      //             height: 100,
-      //             width: 100,
-      //             state.networkImage ?? "",
-      //             errorBuilder: (context, error, stackTrace) {
-      //               return Stack(
-      //                 alignment: Alignment.center,
-      //                 children: [
-      //                   const Center(
-      //                     child: CircleAvatar(
-      //                       radius: 50,
-      //                       backgroundColor: whiteF2F2F2Color,
-      //                     ),
-      //                   ),
-      //                   const Icon(
-      //                       size: 70,
-      //                       color: Colors.black38,
-      //                       Icons.person_rounded),
-      //                   Positioned(
-      //                       top: 64,
-      //                       left: 30,
-      //                       right: -52,
-      //                       child: SvgPicture.asset(
-      //                           '$svgAssetsBasePath/camera_icon.svg')),
-      //                   const Icon(
-      //                       size: 70,
-      //                       color: Colors.black38,
-      //                       Icons.person_rounded)
-      //                 ],
-      //               );
-      //             },
-      //           ),
-      //
-      //         ),
-      //
-      //       ))
-      //   : InkWell(
-      //       onTap: () {
-      //         modelSheet();
-      //         context.read<UploadImageCubit>().delete();
-      //       },
-      //       child: Center(
-      //         child: CircleAvatar(
-      //           radius: 50,
-      //           backgroundColor: Colors.transparent,
-      //           child: ClipRRect(
-      //             clipBehavior: Clip.antiAlias,
-      //             borderRadius: const BorderRadius.all(Radius.circular(60)),
-      //             child: Image.file(
-      //               File(state.localImage ?? ""),
-      //               fit: BoxFit.cover,
-      //               height: 90,
-      //               width: 90,
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //     );
+    return !(state.hasLocalImage)
+        ? InkWell(
+        onTap: () {
+          modelSheet();
+        },
+        child: Center(
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(80)),
+            child: Image.network(
+              fit: BoxFit.fill,
+              height: 100,
+              width: 100,
+              state.networkImage ?? "",
+              errorBuilder: (context, error, stackTrace) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Center(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: whiteF2F2F2Color,
+                      ),
+                    ),
+                    const Icon(
+                        size: 70,
+                        color: Colors.black38,
+                        Icons.person_rounded),
+                    Positioned(
+                        top: 64,
+                        left: 30,
+                        right: -52,
+                        child: SvgPicture.asset(
+                            '$svgAssetsBasePath/camera.svg')
+                    ),
+                    const Icon(
+                        size: 70,
+                        color: Colors.black38,
+                        Icons.person_rounded)
+                  ],
+                );
+              },
+            ),
+            // child: CachedNetworkImage(
+            //   imageUrl: state.networkImage ?? "",
+            //   errorListener: (value) {
+            //     print(value);
+            //   },
+            //   imageBuilder: (context, imageProvider) {
+            //     return Container();
+            //   },
+            //   // imageBuilder: (context, imageProvider) => Container(
+            //   //   decoration: BoxDecoration(
+            //   //     image: DecorationImage(
+            //   //       image: imageProvider,
+            //   //       fit: BoxFit.fill,
+            //   //
+            //   //       // colorFilter:
+            //   //       //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+            //   //     ),
+            //   //   ),
+            //   // ),
+            //   placeholder: _loader,
+            //   errorWidget: _error,
+            // ),
+          ),
+          // Image.network(
+          //   fit: BoxFit.fill,
+          //   height: 100,
+          //   width: 100,
+          //   state.networkImage ?? "",
+          //   errorBuilder: (context, error, stackTrace) {
+          //     return const
+          //     Stack(
+          //       alignment: Alignment.center,
+          //       children: [
+          //         Center(
+          //           child: CircleAvatar(
+          //             radius: 50,
+          //             backgroundColor: whiteF2F2F2Color,
+          //           ),
+          //         ),
+          //         Icon(
+          //             size: 70,
+          //             color: Colors.black38,
+          //             Icons.person_rounded),
+          //         // SvgPicture.asset(
+          //         //     '$svgAssetsBasePath/camera_icon.svg')
+          //
+          //         Icon(
+          //             size: 70,
+          //             color: Colors.black38,
+          //             Icons.person_rounded)
+          //       ],
+          //     );
+          //   },
+          // ),
+        ))
+        : InkWell(
+      onTap: () {
+        modelSheet();
+        context.read<UploadImageCubit>().delete();
+      },
+      child: Center(
+        child: CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.transparent,
+          child: ClipRRect(
+            clipBehavior: Clip.antiAlias,
+            borderRadius: const BorderRadius.all(Radius.circular(60)),
+            child: Image.file(
+              File(state.localImage ?? ""),
+              fit: BoxFit.cover,
+              height: 90,
+              width: 90,
+            ),
+          ),
+        ),
+      ),
+    );
 
     // InkWell(
     //         onTap: () {
@@ -190,79 +242,83 @@ class UploadPhotoWidgetState extends State<UploadPhotoWidget> {
     //       ),
     //     ),
     //   )
-     (imagePath?.isNotEmpty == true
-        ? InkWell(
-       highlightColor: whiteFFFFFFColor,
-            onTap: () {
-              modelSheet();
-            },
-            child: Stack(
-              children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.transparent,
-                    child: ClipRRect(
-                      clipBehavior: Clip.antiAlias,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(60)),
-                      child: Image.file(
-                        File(imagePath ?? ""),
-                        fit: BoxFit.cover,
-                        height: 90,
-                        width: 90,
-                      ),
-                    ),
-                  ),
-                ),
-                // Positioned(
-                //     left: 0,
-                //     right: 0,
-                //     top: 0,
-                //     bottom: 0,
-                //     child: IconButton(
-                //         onPressed: () {},
-                //         icon: SvgPicture.asset(
-                //           "$svgAssetsBasePath/camera.svg",
-                //         ))),
-
-              ],
-            ),
-          )
-        : InkWell(
-       highlightColor: whiteFFFFFFColor,
-
-       onTap: () {
-              modelSheet();
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                const Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: whiteF2F2F2Color,
-                  ),
-                ),
-                const Icon(
-                    size: 70, color: Colors.grey, Icons.person_rounded),
-                Positioned(
-                  top: 64,
-                  left: 30,
-                  right: -52,
-                  child: SvgPicture.asset(
-                      '$svgAssetsBasePath/camera.svg'),
-                )
-              ],
-            ),
-          ));
+    // : (imagePath?.isNotEmpty == true
+    //     ? InkWell(
+    //         onTap: () {
+    //           modelSheet();
+    //         },
+    //         child: Stack(
+    //           children: [
+    //             Center(
+    //               child: CircleAvatar(
+    //                 radius: 50,
+    //                 backgroundColor: Colors.transparent,
+    //                 child: ClipRRect(
+    //                   clipBehavior: Clip.antiAlias,
+    //                   borderRadius:
+    //                       const BorderRadius.all(Radius.circular(60)),
+    //                   child: Image.file(
+    //                     File(imagePath ?? ""),
+    //                     fit: BoxFit.cover,
+    //                     height: 90,
+    //                     width: 90,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //             InkWell(
+    //               onTap: () {
+    //                 setState(() {
+    //                   imagePath = null;
+    //                   //   intImage=widgets.initialImagePath;
+    //                 });
+    //                 intImage = widgets.initialImagePath;
+    //               },
+    //               child: const Positioned(
+    //                 top: 64,
+    //                 left: 30,
+    //                 right: -52,
+    //                 child: Icon(color: Colors.red, Icons.delete_forever)
+    //                 // SvgPicture.asset(
+    //                 //     '$svgAssetsBasePath/camera_icon.svg')
+    //                 ,
+    //               ),
+    //             )
+    //           ],
+    //         ),
+    //       )
+    //     : InkWell(
+    //         onTap: () {
+    //           modelSheet();
+    //         },
+    //         child: Stack(
+    //           alignment: Alignment.center,
+    //           children: [
+    //             const Center(
+    //               child: CircleAvatar(
+    //                 radius: 50,
+    //                 backgroundColor: whiteF2F2F2Color,
+    //               ),
+    //             ),
+    //             const Icon(
+    //                 size: 70, color: Colors.black38, Icons.person_rounded),
+    //             Positioned(
+    //               top: 64,
+    //               left: 30,
+    //               right: -52,
+    //               child: SvgPicture.asset(
+    //                   '$svgAssetsBasePath/camera_icon.svg'),
+    //             )
+    //           ],
+    //         ),
+    //       ));
   }
 
   modelSheet() {
     return showModalBottomSheet(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-        backgroundColor: whiteFFFFFFColor,
+        backgroundColor: purple4C4DDCColor,
         context: context,
         builder: (BuildContext context) {
           return Column(
@@ -281,7 +337,7 @@ class UploadPhotoWidgetState extends State<UploadPhotoWidget> {
                           textStyle: const TextStyle(
                               fontWeight: medium,
                               fontSize: 16,
-                              color: blackFF101010Color),
+                              color: whiteFFFFFFColor),
                         ),
                       ),
                     ),
@@ -290,71 +346,54 @@ class UploadPhotoWidgetState extends State<UploadPhotoWidget> {
                           AppRouter.navigatorKey.currentState?.pop();
                         },
                         child:
-                            const Icon(Icons.close, color: blackFF101010Color))
+                        const Icon(Icons.close, color: whiteFFFFFFColor))
                   ],
                 ),
               ),
               const Divider(
                 height: 0.5,
                 thickness: 0.5,
-                color: blackFF101010Color,
+                color: whiteFFFFFFColor,
               ),
               ListTile(
                 onTap: () {
-                  selectImage(ImageSource.camera);
-
-                  // context
-                  //     .read<UploadImageCubit>()
-                  //     .selectImage(ImageSource.camera);
+                  context
+                      .read<UploadImageCubit>()
+                      .selectImage(ImageSource.camera);
                 },
                 leading:
-                    const Icon(Icons.camera_alt, color: blackFF101010Color),
+                const Icon(Icons.camera_alt, color: whiteFFFFFFColor),
                 title: Text(
                   "Camera",
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                         fontWeight: medium,
                         fontSize: 14,
-                        color: blackFF101010Color),
+                        color: whiteFFFFFFColor),
                   ),
                 ),
               ),
               ListTile(
                 onTap: () {
-                  selectImage(ImageSource.gallery);
-
-                  // context
-                  //     .read<UploadImageCubit>()
-                  //     .selectImage(ImageSource.gallery);
+                  context
+                      .read<UploadImageCubit>()
+                      .selectImage(ImageSource.gallery);
                 },
-                leading:  Icon(Icons.picture_in_picture,
-                    color: blackFF101010Color),
+                leading: const Icon(Icons.picture_in_picture,
+                    color: whiteFFFFFFColor),
                 title: Text(
                   "Gallery",
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
                         fontWeight: medium,
                         fontSize: 14,
-                        color: blackFF101010Color),
+                        color: whiteFFFFFFColor),
                   ),
                 ),
               )
             ],
           );
         });
-  }
-  selectImage(ImageSource imageSource) async {
-    AppRouter.navigatorKey.currentState?.pop();
-    final XFile? pickedFile =
-    await ImagePicker().pickImage(source: imageSource);
-    if (pickedFile != null) {
-      final file = File(
-        pickedFile.path,
-      );
-      setState(() {
-        imagePath = file.path;
-      });
-    }
   }
 
   Widget _loader(BuildContext context, String url) {

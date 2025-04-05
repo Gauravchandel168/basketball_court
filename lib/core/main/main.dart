@@ -21,13 +21,5 @@ void main() async{
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
   WidgetsFlutterBinding.ensureInitialized();
-
-
-  await Hive.initFlutter(); // Initialize Hive
-
-  Hive.registerAdapter(UserModelAdapter()); // Register your model
-
-  await Hive.openBox<UserModel>('userBox'); // Open Hive box
-
   runApp(BlocAndRepositoryProvider());
 }

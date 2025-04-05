@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     themeMode: ThemeMode.light,
     debugShowCheckedModeBanner: false,
     navigatorKey: AppRouter.navigatorKey,
-    initialRoute: AppRouter.logInScreen,
+    initialRoute: AppRouter.signUp,
     onGenerateRoute: AppRouter.onGenerateRoute,
 
     builder: (context, child) {
@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
           themeMode: ThemeMode.light,
           debugShowCheckedModeBanner: false,
           navigatorKey: AppRouter.navigatorKey,
-          initialRoute: AppRouter.logInScreen,
+          initialRoute: AppRouter.signUp,
           onGenerateRoute: AppRouter.onGenerateRoute,
           useInheritedMediaQuery: true,
           builder: (context, child) {

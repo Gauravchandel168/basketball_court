@@ -9,6 +9,7 @@ import '../../../core/colors/app_colors.dart';
 import '../../../core/constants/assets_base_paths.dart';
 import '../../../core/constants/font_weight.dart';
 import '../../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
+import '../../../logic/upload_image_cubit/upload_image_cubit.dart';
 import '../../../widgets/common_Elevated_Button.dart';
 import '../../../widgets/custom_textField.dart';
 import '../../../widgets/loading_error_widget.dart';
@@ -72,23 +73,24 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-            
-                Row(
-                  children: [
-                    Expanded(
-                      child: _textFieldRw(
-                          textController: firstNameontroller, hintText: 'Adam'),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Expanded(
-                      child: _textFieldRw(
-                          textController: lastnameController, hintText: 'Smith'),
-                    ),
-                  ],
-            
-                ),
+            _textFieldRw(
+                         textController: firstNameontroller, hintText: 'Adam'),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: _textFieldRw(
+                //           textController: firstNameontroller, hintText: 'Adam'),
+                //     ),
+                //     const SizedBox(
+                //       width: 15,
+                //     ),
+                //     Expanded(
+                //       child: _textFieldRw(
+                //           textController: lastnameController, hintText: 'Smith'),
+                //     ),
+                //   ],
+                //
+                // ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -112,7 +114,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text("Phone Number",
+                Text("Age",
                     style: GoogleFonts.plusJakartaSans(
                       textStyle:
                       const TextStyle(fontSize: 14,
@@ -124,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 CustomTextField(
                   textController: phoneNumberController,
-                  hintText: 'Enter your phone number',
+                  hintText: 'Enter your age',
                   type: 'number',
                   obsecure: false,
                   suffix: false,
@@ -202,42 +204,29 @@ class _SignupScreenState extends State<SignupScreen> {
                       showError(state.message);
                     } else if (state is SignUpSuccess) {
                       hideBothLoadingAndError();
-                      //  AppRouter.navigatorKey.currentState?.pop();
-                      // AppRouter.navigatorKey.currentState
-                      //     ?.pushNamed(AppRouter.logInScreen);
+                    //   AppRouter.navigatorKey.currentState?.pop();
+                      AppRouter.navigatorKey.currentState
+                          ?.pushNamed(AppRouter.logInScreen);
                     }
 
                   },
                   child:
-                  CommonElevatedButton("Login", () {
+                  CommonElevatedButton("Sign Up", () {
                     context.read<SignUpCubit>().signUpMethod(
-                      firstNameontroller.text,
-                      emailController.text,
-                      passwordController.text,
-                      passwordController.text,
-                       num.tryParse(lastnameController.text) ?? 0,
-                       // null, // No image for now
-                    );
+                        firstNameontroller.text,
+                        emailController.text,
+                        passwordController.text,
+                       // confirmPaswordController.text,
+                        num.parse(phoneNumberController.text),
+                        context
+                            .read<UploadImageCubit>()
+                            .state
+                            .localImage ??
+                            "");
                   }),
 
                 ),
-                BlocListener<SignUpCubit, SignUpState>(
-                  listener: (context, state) {
-                    if (state is SignUpLoading) {
-                      showLoading();
-                     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Loading...")));
-                    } else if (state is SignUpSuccess) {
-                      showError("User found: ${state.user.username}");
-                      //hideBothLoadingAndError();
-                      //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User found: ${state.user.username}")));
-                    } else if (state is SignUpError) {
-                      showError(state.message);
 
-                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-                    }
-                  },
-                  child: Container(), // Empty container, as BlocListener only listens for state changes
-                ),
                 const SizedBox(
                   height: 25,
                 ),
@@ -280,31 +269,29 @@ class _SignupScreenState extends State<SignupScreen> {
 
   _textRow() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text("First Name",
-              style: GoogleFonts.plusJakartaSans(
-                textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: bold,
-                    color: blackFF101010Color),
-              )),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        Expanded(
-          child: Text("Last Name",
-              style: GoogleFonts.plusJakartaSans(
-                textStyle: const TextStyle(
-
-                    fontSize: 14,
-                    fontWeight: bold,
-                    color: blackFF101010Color
-                ),
-              )),
-        )
+        Text("First Name",
+            style: GoogleFonts.plusJakartaSans(
+              textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: bold,
+                  color: blackFF101010Color),
+            )),
+        // const SizedBox(
+        //   width: 15,
+        // ),
+        // Expanded(
+        //   child: Text("Last Name",
+        //       style: GoogleFonts.plusJakartaSans(
+        //         textStyle: const TextStyle(
+        //
+        //             fontSize: 14,
+        //             fontWeight: bold,
+        //             color: blackFF101010Color
+        //         ),
+        //       )),
+        // )
       ],
     );
   }

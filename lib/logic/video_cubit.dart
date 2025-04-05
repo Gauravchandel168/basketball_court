@@ -16,9 +16,7 @@ const String appId = "dee7af634433419e96023a393890962c";
 //const String token = "YOUR_AGORA_TEMP_TOKEN";
 
 ///For u kind information user token is expire u have re genrate it
-const String token =
-    "007eJxTYOib9dLE1z7+3MuYyti3Cbu/8ka5Tgmadnd31uxvXdIJJfMUGFJSU80T08yMTUyMjU0MLVMtzQyMjBONLY0tLA0szYySpfrfpTcEMjJI761gZWSAQBCfiyEpsTg7tSQpMSeHgQEAZzEiUg==";
-
+const String token = "007eJxTYGjXVgybuGcRo/mMqlILt8BfPcve+eZGf74fl1X7awPDzwsKDCmpqeaJaWbGJibGxiaGlqmWZgZGxonGlsYWlgaWZkbJ+99+SG8IZGTIrWFjZGSAQBCfiyEpsTg7tSQpMSeHgQEANGciaQ==";
 class VideoCubit extends Cubit<VideoState> {
   late RtcEngine engine;
   late VideoViewController localVideoController;

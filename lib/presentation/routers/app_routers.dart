@@ -1,13 +1,15 @@
-import 'package:basketball/logic/location_cubit.dart';
+import 'package:basketball/logic/video_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/respositories/http_repository/auth_repository.dart';
+import '../../logic/auth_cubit/auth_token_store_cubit.dart';
+import '../../logic/auth_cubit/sign_in_cubit/sign_in_cubit.dart';
 import '../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
+import '../../logic/call_cubit.dart';
 import '../../logic/internet/internet_cubit.dart';
-import '../../logic/video_cubit.dart';
 import '../screens/change_password_screen/change_password_screen.dart';
 import '../screens/dashbord_screen/dash_board_screen.dart';
-import '../screens/dashbord_screen/home_screen/home_screen.dart';
 import '../screens/forget_password_screen/forget_password-screen.dart';
 import '../screens/home_detail_screen/home_detail.dart';
 import '../screens/login_Screen/login_screen.dart';
@@ -21,9 +23,9 @@ import '../screens/video_call/video_call.dart';
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static const String signUp = "/signUp";
+  static const String signUp = "/";
 
-  static const String logInScreen = "/";
+  static const String logInScreen = "/logInScreen";
 
   static const String dashBoardScreen = "/dashBoardScreen";
 
@@ -82,7 +84,11 @@ class AppRouter {
 
   static _logInScreen() {
     return MaterialPageRoute(builder: (context) => BlocProvider(
-  create: (context) => VideoCubit(),
+  create: (context) => SignInCubit(
+      context.read<InternetCubit>(),
+      context.read<AuthRepository>(),
+      context.read<AuthTokenStoreCubit>()
+  ),
   child: LoginScreen(),
 ));
   }
@@ -90,7 +96,7 @@ class AppRouter {
   static _signUp() {
     return MaterialPageRoute(builder: (context) => BlocProvider(
   create: (context) => SignUpCubit(
-    context.read<InternetCubit>(),
+      context.read<InternetCubit>(), context.read<AuthRepository>()
   ),
   child: SignupScreen(),
 ));

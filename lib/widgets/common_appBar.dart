@@ -20,16 +20,23 @@ class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      elevation: 0,
+      elevation: 3,
+      leadingWidth: 50,
+
+      primary: true,
       actionsPadding: EdgeInsets.zero,
       backgroundColor: purple4C4DDCColor,
-      leading: InkWell(
-        onTap: () {
-          AppRouter.navigatorKey.currentState?.pop();
-        },
-        child: SvgPicture.asset(
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 4.0,bottom: 7),
+        child: InkWell(
+          onTap: () {
+            AppRouter.navigatorKey.currentState?.pop();
+          },
+          child: SvgPicture.asset(
 
-        "$svgAssetsBasePath/back_arrow.svg"),
+           fit: BoxFit.cover,
+          "$svgAssetsBasePath/back_arrow.svg"),
+        ),
       ),
       title: Text(
         text!,

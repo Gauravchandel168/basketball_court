@@ -8,10 +8,9 @@ class SignUpInitial extends SignUpState {}
 class SignUpLoading extends SignUpState {}
 
 class SignUpSuccess extends SignUpState {
- // final SignupResponseModel signupResponseModel;
-  final UserModel user;
+  final SignupResponseModel signupResponseModel;
 
-  SignUpSuccess(this.user);
+  SignUpSuccess(this.signupResponseModel);
 }
 
 class SignUpError extends SignUpState {

@@ -1,7 +1,8 @@
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:basketball/core/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../logic/video_cubit.dart';
 import '../../../widgets/common_appBar.dart';
@@ -27,12 +28,15 @@ bool showLocalView = false;
   @override
   void initState() {
     super.initState();
+    _requestPermissions();
     context.read<VideoCubit>().initialize(channelName: widget.channelName);
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() => showLocalView = true);
     });
   }
-
+Future<void> _requestPermissions() async {
+    await [Permission.microphone, Permission.camera].request();
+  }
   @override
   Widget build(BuildContext context) {
     final videoState = context.watch<VideoCubit>().state;
@@ -52,21 +56,7 @@ bool showLocalView = false;
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   // onPressed: () => context.read<VideoCubit>().joinCall(
-      //   //     channelName: widget.channelName
-      //   // ),
-      //   // shape: CircleBorder(),
-      //   // backgroundColor: green2EC35FColor,
-      //   backgroundColor: Colors.grey[800],
-      //
-      //   onPressed: () {},
-      //   child: Icon(
-      //     size: 38,
-      //     Icons.video_camera_front_sharp,
-      //     color: green2EC35FColor,
-      //   ),
-      // ),
+
       floatingActionButton: _buildFab(videoState),
 
     );
