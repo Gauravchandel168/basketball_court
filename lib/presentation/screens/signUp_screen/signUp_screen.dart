@@ -212,12 +212,15 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   child:
                   CommonElevatedButton("Sign Up", () {
+                    final phoneText = phoneNumberController.text.trim();
+                    final phoneNumber = num.tryParse(phoneText);
+                   // gaurav123@gmail.com
                     context.read<SignUpCubit>().signUpMethod(
                         firstNameontroller.text,
                         emailController.text,
                         passwordController.text,
                        // confirmPaswordController.text,
-                        num.parse(phoneNumberController.text),
+                        phoneNumber??1234567890,
                         context
                             .read<UploadImageCubit>()
                             .state

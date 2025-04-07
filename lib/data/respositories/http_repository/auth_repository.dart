@@ -1,6 +1,7 @@
 
 import '../../data_providers/http/custom_http_exception.dart';
 import '../../data_providers/http/http_client.dart';
+import '../../model/auth_model/get_agora_token_and_channel_model.dart';
 import '../../model/sigin_model/sign_in_request_model.dart';
 import '../../model/sigin_model/sign_in_response.dart';
 import '../../model/sigin_model/signin_exception.dart';
@@ -43,6 +44,17 @@ class AuthRepository {
       return signInResponseFromJson(response.body);
     } else {
       throw signinExceptionFromJson(response.body);
+    }
+  }
+
+  Future<GetAgoraTokenAndChannelModel> getAgoraTokenChannel({required String userId, required String token}) async {
+    final response = await myHttpClient.getAgoraTokenChannel(userId: userId,token: token);
+
+    var res = getAgoraTokenAndChannelModelFromJson(response.body);
+    if (response.statusCode == 201) {
+      return res;
+    } else {
+      throw CustomHttpException(error: res.message ?? "Something went wrong!");
     }
   }
 }

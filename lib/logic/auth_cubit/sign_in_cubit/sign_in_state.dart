@@ -9,8 +9,8 @@ final class SignInInitial extends SignInState {}
 class SignInLoading extends SignInState {}
 
 class SignInSuccess extends SignInState {
-  final SignInResponse signInResponseModel;
-  SignInSuccess(this.signInResponseModel);
+  //final SignInResponse signInResponseModel;
+  SignInSuccess();
 }
 
 class SignInError extends SignInState {

@@ -22,18 +22,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isChecked = false;
-  TextEditingController emailController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController _channelController = TextEditingController();
-
 
   @override
   void dispose() {
     _channelController.dispose();
     passwordController.dispose();
-    emailController.dispose();
+    userNameController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,64 +45,61 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 SvgPicture.asset("$svgAssetsBasePath/logo.svg"),
-                const SizedBox(
-                  height: 30,
+                const SizedBox(height: 30),
+                Text(
+                  "Login",
+                  style: GoogleFonts.plusJakartaSans(
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: bold,
+                      color: blackFF101010Color,
+                    ),
+                  ),
                 ),
-                Text("Login",
-                    style: GoogleFonts.plusJakartaSans(
-                      textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: bold,
-                          color: blackFF101010Color),
-                    )),
-                const SizedBox(
-                  height: 5,
+                const SizedBox(height: 5),
+                Text(
+                  "To use your account, you should log in first.",
+                  style: GoogleFonts.plusJakartaSans(
+                    textStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: normal,
+                      color: black878787Color,
+                    ),
+                  ),
                 ),
-                Text("To use your account, you should log in first.",
-                    style: GoogleFonts.plusJakartaSans(
-                      textStyle: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: normal,
-                          color: black878787Color),
-                    )),
-                const SizedBox(
-                  height: 35,
+                const SizedBox(height: 35),
+                Text(
+                  "Username",
+                  style: GoogleFonts.plusJakartaSans(
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: bold,
+                      color: blackFF101010Color,
+                    ),
+                  ),
                 ),
-                Text("Email Address",
-                    style: GoogleFonts.plusJakartaSans(
-                      textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: bold,
-                          color: blackFF101010Color
-                      ),
-                    )),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 CustomTextField(
-                  textController: emailController,
-                  hintText: 'abc@gmail.com',
-                  type: 'number',
+                  textController: userNameController,
+                  hintText: 'Amith',
+                  type: '',
                   obsecure: false,
                   suffix: false,
                 ),
-                const SizedBox(
-                  height: 15,
+                const SizedBox(height: 15),
+                Text(
+                  "Password",
+                  style: GoogleFonts.plusJakartaSans(
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: bold,
+                      color: blackFF101010Color,
+                    ),
+                  ),
                 ),
-                Text("Password",
-                    style: GoogleFonts.plusJakartaSans(
-                      textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: bold,
-                          color: blackFF101010Color),
-                    )),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 CustomTextField(
                   textController: passwordController,
                   hintText: 'enter your password',
@@ -110,24 +107,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   obsecure: true,
                   suffix: true,
                 ),
-            Text("Password",
-                style: GoogleFonts.plusJakartaSans(
-                  textStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: bold,
-                      color: blackFF101010Color),
-                )),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-                  textController: _channelController,
-                  hintText: "Enter Channel Name",
-                  //'abc@gmail.com',
-                  type: '',
-                  obsecure: false,
-                  suffix: false,
-                ),
+                // Text("Password",
+                //     style: GoogleFonts.plusJakartaSans(
+                //       textStyle: const TextStyle(
+                //           fontSize: 14,
+                //           fontWeight: bold,
+                //           color: blackFF101010Color),
+                //     )),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // CustomTextField(
+                //       textController: _channelController,
+                //       hintText: "Enter Channel Name",
+                //       //'abc@gmail.com',
+                //       type: '',
+                //       obsecure: false,
+                //       suffix: false,
+                //     ),
+                //     const SizedBox(
+                //       height: 20,
+                //     ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -146,8 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             splashRadius: 1,
                             side: const BorderSide(color: greyD6D6D6Color),
                             shape: RoundedRectangleBorder(
-                                side: const BorderSide(color: greyD6D6D6Color),
-                                borderRadius: BorderRadius.circular(5)),
+                              side: const BorderSide(color: greyD6D6D6Color),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                             onChanged: (bool? value) {
                               setState(() {
                                 _isChecked = value!;
@@ -155,37 +156,40 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                         ),
-                        const SizedBox(
-                          width: 12,
+                        const SizedBox(width: 12),
+                        Text(
+                          "Remember me",
+                          style: GoogleFonts.plusJakartaSans(
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: normal,
+                              color: blackFF101010Color,
+                            ),
+                          ),
                         ),
-                        Text("Remember me",
-                            style: GoogleFonts.plusJakartaSans(
-                              textStyle: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: normal,
-                                  color: blackFF101010Color),
-                            )),
                       ],
                     ),
                     //SizedBox(width: 60,),
                     InkWell(
                       onTap: () {
-                        AppRouter.navigatorKey.currentState
-                            ?.pushNamed(AppRouter.forgetPasswordScreen);
+                        // AppRouter.navigatorKey.currentState?.pushNamed(
+                        //   AppRouter.forgetPasswordScreen,
+                        // );
                       },
-                      child: Text("Forget password",
-                          style: GoogleFonts.plusJakartaSans(
-                            textStyle: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: normal,
-                                color: purple4C4DDCColor),
-                          )),
+                      child: Text(
+                        "Forget password",
+                        style: GoogleFonts.plusJakartaSans(
+                          textStyle: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: normal,
+                            color: purple4C4DDCColor,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 55,
-                ),
+                const SizedBox(height: 55),
 
                 BlocListener<SignInCubit, SignInState>(
                   listener: (context, state) {
@@ -195,56 +199,53 @@ class _LoginScreenState extends State<LoginScreen> {
                       showError(state.message);
                     } else if (state is SignInSuccess) {
                       hideBothLoadingAndError();
-                      //  AppRouter.navigatorKey.currentState?.pop();
-                      // AppRouter.navigatorKey.currentState
-                      //     ?.pushNamed(AppRouter.bibleQuizHomeScreen);
-                                  AppRouter.navigatorKey.currentState
-                                      ?.pushNamed(AppRouter.videoCallScreen,
-                                      arguments: _channelController.text.trim()
-                                  );
-
-
+                      AppRouter.navigatorKey.currentState?.pushNamed(
+                        AppRouter.forgetPasswordScreen,
+                      );
                     }
                   },
                   child: CommonElevatedButton("Login", () {
                     context.read<SignInCubit>().signINMethod(
-                      emailController.text,
+                      userNameController.text,
                       passwordController.text,
-
                     );
-                  })),
-
-                const SizedBox(
-                  height: 25,
+                  }),
                 ),
+
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don’t have an account?",
-                        style: GoogleFonts.plusJakartaSans(
-                          textStyle: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: normal,
-                              color: black878787Color),
-                        )),
-                    const SizedBox(
-                      width: 6,
+                    Text(
+                      "Don’t have an account?",
+                      style: GoogleFonts.plusJakartaSans(
+                        textStyle: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: normal,
+                          color: black878787Color,
+                        ),
+                      ),
                     ),
+                    const SizedBox(width: 6),
                     InkWell(
                       onTap: () {
-                        AppRouter.navigatorKey.currentState
-                            ?.pushNamed(AppRouter.signUp);
+                        AppRouter.navigatorKey.currentState?.pushNamed(
+                          AppRouter.signUp,
+                        );
                       },
-                      child: Text("Sign Up",
-                          style: GoogleFonts.plusJakartaSans(
-                            textStyle: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: bold,
-                                color: purple4C4DDCColor),
-                          )),
+                      child: Text(
+                        "Sign Up",
+                        style: GoogleFonts.plusJakartaSans(
+                          textStyle: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: bold,
+                            color: purple4C4DDCColor,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -253,8 +254,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:permission_handler/permission_handler.dart';
@@ -326,4 +325,3 @@ class _LoginScreenState extends State<LoginScreen> {
 //   }
 //
 // }
-

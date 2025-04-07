@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/respositories/http_repository/auth_repository.dart';
 import '../../logic/auth_cubit/auth_token_store_cubit.dart';
+import '../../logic/auth_cubit/user_hybrated_storage__cubit.dart';
 import '../../logic/internet/internet_cubit.dart';
 import '../../logic/upload_image_cubit/upload_image_cubit.dart';
 import 'app.dart';
@@ -24,6 +25,7 @@ class BlocAndRepositoryProvider extends StatelessWidget {
           BlocProvider<InternetCubit>(create: (context) => InternetCubit()),
 
           BlocProvider<NavigationCubit>(create: (context) => NavigationCubit()),
+          BlocProvider<UserHybratedStorageCubit>(create: (context) => UserHybratedStorageCubit()),
 
           BlocProvider(create: (context) => AuthTokenStoreCubit()),
           BlocProvider(

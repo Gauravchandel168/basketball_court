@@ -2,105 +2,148 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:basketball/core/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/constants/font_weight.dart';
+import '../../../data/model/auth_model/get_agora_token_and_channel_model.dart';
 import '../../../logic/video_cubit.dart';
 import '../../../widgets/common_appBar.dart';
+import '../../routers/app_routers.dart';
+import '../forget_password_screen/widget/agoraTokenmodel.dart';
 
 class VideoCallScreen extends StatefulWidget {
-  final String channelName;
+  final AgoraTokenModel agoraTokenModel;
 
-  const VideoCallScreen({super.key, required this.channelName});
+  const VideoCallScreen({
+    super.key,
+    required this.agoraTokenModel,
+  });
 
   @override
   _VideoCallScreenState createState() => _VideoCallScreenState();
 }
 
 class _VideoCallScreenState extends State<VideoCallScreen>
-  with SingleTickerProviderStateMixin {
-bool showLocalView = false;
+    with SingleTickerProviderStateMixin {
+  bool showLocalView = false;
 
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
   //   context.read<VideoCubit>().leaveCall();
   // }
+
   @override
   void initState() {
     super.initState();
+    print(widget.agoraTokenModel.channelId);
+    print(widget.agoraTokenModel.appId);
+    print(widget.agoraTokenModel.token);
+
+    print("widget.agoraTokenModel.channelId");
     _requestPermissions();
-    context.read<VideoCubit>().initialize(channelName: widget.channelName);
+    context.read<VideoCubit>().initialize(
+      channelId: widget.agoraTokenModel.channelId ?? "",
+      token: widget.agoraTokenModel.token ?? "",
+      appId: widget.agoraTokenModel.appId ?? "",
+    );
+
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() => showLocalView = true);
     });
   }
-Future<void> _requestPermissions() async {
-    await [Permission.microphone, Permission.camera].request();
+
+  Future<void> _requestPermissions() async {
+    await [Permission.microphone, Permission.camera,].request();
   }
+
   @override
   Widget build(BuildContext context) {
     final videoState = context.watch<VideoCubit>().state;
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CommonAppbar(text: 'Agora Video Call'),
-
+     // appBar: CommonAppbar(text: 'Agora Video Call'),
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 3,
+        primary: true,
+        actionsPadding: EdgeInsets.zero,
+        backgroundColor: green2EC35FColor,
+        leading: InkWell(
+          onTap: () {
+            AppRouter.navigatorKey.currentState?.pop();
+          },
+          child:Icon(Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
+          // SvgPicture.asset(
+          //   fit: BoxFit.cover,
+          //   "$svgAssetsBasePath/back_arrow.svg",
+          // ),
+        ),
+        title: Text(
+          "Calling",
+          style: GoogleFonts.plusJakartaSans(
+            textStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: bold,
+              color: blackFF101010Color,
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Stack(
           children: [
             _buildRemoteView(videoState),
-           // if (showLocalView) _buildLocalView(videoState),
 
+            // if (showLocalView) _buildLocalView(videoState),
             _buildLocalView(videoState),
             _buildControls(videoState),
-            _durationAndStatus(videoState),
+            _buildStatusAndDuration(videoState),
           ],
         ),
       ),
 
       floatingActionButton: _buildFab(videoState),
-
     );
   }
 
   Widget _buildRemoteView(VideoState state) {
-    if (state is VideoConnected) {
+    print(state);
+
+    if (state is VideoSuccess && state.remoteUid != null) {
+      // print(state);
+      // print("state.toString()");
       return Positioned.fill(
         child: AgoraVideoView(
           controller: VideoViewController.remote(
             rtcEngine: context.read<VideoCubit>().engine,
-            canvas: VideoCanvas(uid: state.uid),
+            canvas: VideoCanvas(uid: state.remoteUid),
             connection: RtcConnection(
-              channelId: widget.channelName,
+              channelId: widget.agoraTokenModel.channelId ?? "",
               localUid: state.localUid,
             ),
           ),
         ),
       );
-    }
-    else if (state is VideoDisconnected) {
+    } else if (state is VideoLoading) {
+      return const Center(child: CircularProgressIndicator(color: whiteFFFFFFColor));
+    } else if (state is VideoError) {
       return const Center(
-        child: Text(
-          "Call Disconnected",
-          style: TextStyle(color: Colors.red, fontSize: 18),
-        ),
+        child: Text("Call Disconnected", style: TextStyle(color: Colors.red, fontSize: 18)),
       );
-    }
-    else {
+    } else {
       return const Center(
-        child: Text(
-          "Waiting for user...",
-          style: TextStyle(color: whiteFFFFFFColor, fontSize: 16),
-        ),
+        child: Text("Calling...", style: TextStyle(color: whiteFFFFFFColor, fontSize: 16)),
       );
     }
   }
-Widget _buildLocalView(VideoState state) {
-  final isReady = state is VideoLocalJoined || state is VideoConnected;
+  Widget _buildLocalView(VideoState state) {
+    final bool isReady = state is VideoSuccess;
 
-  return AnimatedOpacity(
-    duration: const Duration(milliseconds: 500),
-    opacity: showLocalView ? 1 : 0,
-    child: Positioned(
+    return Positioned(
       bottom: 160,
       right: 20,
       child: Container(
@@ -110,123 +153,32 @@ Widget _buildLocalView(VideoState state) {
         ),
         width: 120,
         height: 160,
-        child: (isReady)
+        child: isReady
             ? AgoraVideoView(
           controller: VideoViewController(
             rtcEngine: context.read<VideoCubit>().engine,
             canvas: const VideoCanvas(uid: 0),
           ),
         )
-            : Center(child: CircularProgressIndicator()),
-      ),
-    ),
-  );
-}
-  // Widget _buildsLocalView(VideoState state) {
-  //
-  //   if (state is VideoLocalJoined) {
-  //     return AnimatedOpacity(
-  //       duration: const Duration(milliseconds: 500),
-  //       opacity: showLocalView ? 1 : 0,
-  //       child: Positioned(
-  //         bottom: 160,
-  //         right: 20,
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             border: Border.all(color: whiteFFFFFFColor, width: 2),
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           width: 120,
-  //           height: 160,
-  //           child: AgoraVideoView(
-  //             controller: VideoViewController(
-  //               rtcEngine: context.read<VideoCubit>().engine,
-  //               canvas: const VideoCanvas(uid: 0),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     // return const SizedBox();
-  //     return AnimatedOpacity(
-  //       duration: const Duration(milliseconds: 500),
-  //       opacity: showLocalView ? 1 : 0,
-  //       child: Positioned(
-  //         bottom: 160,
-  //         right: 20,
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             border: Border.all(color: whiteFFFFFFColor, width: 2),
-  //             borderRadius: BorderRadius.all(Radius.circular(12)),
-  //           ),
-  //           width: 120,
-  //           height: 160,
-  //           child: Center(child: CircularProgressIndicator()),
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
-
-
-  Widget _durationAndStatus(VideoState state) {
-    String? durationText;
-    String? statusText;
-
-    if (state is CallDurationUpdated) {
-      durationText = "Duration: ${state.duration}";
-    }
-
-    if (state is VideoConnecting) {
-      statusText = "Connecting...";
-      ///REMBER THIS
-      ///
-      ///Let me know if you want me
-      /// to help update the UI side to
-      /// listen for VideoConnecting
-      /// and show a loading spinner or connecting animation.
-
-    } else if (state is VideoConnected) {
-      statusText = "Connected";
-    } else if (state is VideoDisconnected) {
-      statusText = "Call Ended";
-    }
-
-    return Positioned(
-      top: 30,
-      left: 20,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (statusText != null)
-            Text(
-              statusText,
-              style: const TextStyle(color: Colors.orangeAccent, fontSize: 16),
-            ),
-          if (durationText != null)
-            Row(
-              children: [
-                Text(
-                  ".",
-                  style: TextStyle(color: Colors.red, fontSize: 86),
-                ),
-                Text(
-                  durationText,
-                  style: const TextStyle(color: whiteFFFFFFColor, fontSize: 14),
-                ),
-              ],
-            ),
-        ],
+            : const Center(child: CircularProgressIndicator()),
       ),
     );
   }
+
+
+
+
+
+
   Widget _buildControls(VideoState state) {
-    ///my
-    final isMuted = state is VideoMuted && state.isMuted;
-    // if (state is! VideoConnected && state is! VideoMuted && state is! CallDurationUpdated) {
+
+   ///new
+    // if (state is! VideoSuccess)
     //   return const SizedBox.shrink();
-    // }
+
+  //  final isMuted = state.isMuted;
+    ///
+    final isMuted = state is VideoMuted && state.isMuted;
 
     return Positioned(
       bottom: 30,
@@ -282,21 +234,234 @@ Widget _buildLocalView(VideoState state) {
     if (state is VideoDisconnected) {
       return FloatingActionButton.extended(
         backgroundColor: Colors.green,
-        onPressed: () => context.read<VideoCubit>().initialize(channelName: widget.channelName),
+        onPressed:
+            () => context.read<VideoCubit>().initialize(
+              channelId: widget.agoraTokenModel.channelId ?? "",
+              token: widget.agoraTokenModel.token ?? "",
+              appId: widget.agoraTokenModel.appId ?? "",
+            ),
+
         icon: const Icon(Icons.replay),
-        label: const Text("Retry",
-        style: TextStyle(),
-        ),
+        label: const Text("Retry", style: TextStyle()),
       );
-   }
+    }
     return FloatingActionButton(
       backgroundColor: Colors.grey[800],
       onPressed: () {},
-      child: const Icon(Icons.video_camera_front_sharp, color: green2EC35FColor, size: 38),
+      child: const Icon(
+        Icons.video_camera_front_sharp,
+        color: green2EC35FColor,
+        size: 38,
+      ),
     );
   }
 
+//
+
+  Widget _buildStatusAndDuration(VideoState state) {
+    String? durationText;
+    String? statusText;
+
+    if (state is VideoLoading) {
+      statusText = "Connecting...";
+    }
+  //  else if (state is CallDurationUpdated) {
+  //   durationText = state.duration;
+  //  // "Duration: ${state.duration}";
+  // }
+    else if (state is VideoSuccess ) {
+      statusText = "Connected";
+      durationText = state.duration;
+    } else if (state is VideoError) {
+      statusText = "Call Ended";
+    }
+
+    return Positioned(
+      top: 30,
+      left: 20,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (statusText != null)
+            Text(statusText, style: const TextStyle(color: whiteFFFFFFColor, fontSize: 16)),
+          if (durationText != null)
+            Row(
+              children: [
+                const CircleAvatar(backgroundColor: Colors.red, radius: 6),
+                const SizedBox(width: 10),
+                Text(durationText, style: const TextStyle(color: whiteFFFFFFColor, fontSize: 14)),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+
+
 }
+
+/// new one latest
+//  Widget _buildRemoteView(VideoState state) {
+//     if (state is VideoConnected) {
+//       return Positioned.fill(
+//         child: AgoraVideoView(
+//           controller: VideoViewController.remote(
+//             rtcEngine: context.read<VideoCubit>().engine,
+//             canvas: VideoCanvas(uid: state.uid),
+//             connection: RtcConnection(
+//               channelId: widget.agoraTokenModel.channelId ?? "",
+//               localUid: state.localUid,
+//             ),
+//           ),
+//         ),
+//       );
+//     } else if (state is VideoConnecting) {
+//       return const Center(
+//         child: CircularProgressIndicator(color: whiteFFFFFFColor),
+//       );
+//     }else if (state is VideoDisconnected) {
+//       return const Center(
+//         child: Text(
+//           "Call Disconnected",
+//           style: TextStyle(color: Colors.red, fontSize: 18),
+//         ),
+//       );
+//     } else {
+//       return const Center(
+//         child: Text(
+//           "Waiting for user...",
+//           style: TextStyle(color: whiteFFFFFFColor, fontSize: 16),
+//         ),
+//       );
+//     }
+//   }
+
+//  Widget _buildLocalView(VideoState state) {
+//     final isReady = state is VideoLocalJoined ;
+//         //|| state is VideoConnected;
+//
+//     return Positioned(
+//       bottom: 160,
+//       right: 20,
+//       child: Container(
+//         decoration: BoxDecoration(
+//           border: Border.all(color: whiteFFFFFFColor, width: 2),
+//           borderRadius: BorderRadius.circular(12),
+//         ),
+//         width: 120,
+//         height: 160,
+//         child:
+//             (isReady)
+//                 ? AgoraVideoView(
+//                   controller: VideoViewController(
+//                     rtcEngine: context.read<VideoCubit>().engine,
+//                     canvas: const VideoCanvas(uid: 0),
+//                   ),
+//                 )
+//                 : Center(child: CircularProgressIndicator()),
+//       ),
+//     );
+//   }
+
+// Widget _buildControls(VideoState state) {
+//     ///my
+//     final isMuted = state is VideoMuted && state.isMuted;
+//     // if (state is! VideoConnected && state is! VideoMuted && state is! CallDurationUpdated) {
+//     //   return const SizedBox.shrink();
+//     // }
+//
+//     return Positioned(
+//       bottom: 30,
+//       left: 0,
+//       right: 0,
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           _controlButton(
+//             iconOn: Icons.mic,
+//             iconOff: Icons.mic_off,
+//             isToggled: isMuted,
+//             onTap: context.read<VideoCubit>().toggleMute,
+//           ),
+//           const SizedBox(width: 20),
+//           _controlButton(
+//             iconOn: Icons.switch_camera,
+//             iconOff: Icons.switch_camera,
+//             isToggled: false,
+//             onTap: context.read<VideoCubit>().switchCamera,
+//           ),
+//           const SizedBox(width: 20),
+//           _controlButton(
+//             iconOn: Icons.call_end,
+//             iconOff: Icons.call_end,
+//             isToggled: false,
+//             onTap: () {
+//               context.read<VideoCubit>().leaveCall();
+//               Navigator.pop(context);
+//             },
+//             backgroundColor: Colors.red,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// Widget _durationAndStatus(VideoState state) {
+//   String? durationText;
+//   String? statusText;
+//
+//   if (state is CallDurationUpdated) {
+//     durationText = state.duration;
+//    // "Duration: ${state.duration}";
+//   }
+//
+//   if (state is VideoConnecting) {
+//     statusText = "Connecting...";
+//
+//     ///REMBER THIS
+//     ///
+//     ///Let me know if you want me
+//     /// to help update the UI side to
+//     /// listen for VideoConnecting
+//     /// and show a loading spinner or connecting animation.
+//   } else if (state is VideoConnected) {
+//     statusText = "Connected";
+//   } else if (state is VideoDisconnected) {
+//     statusText = "Call Ended";
+//   }
+//
+//   return Positioned(
+//     top: 30,
+//     left: 20,
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         if (statusText != null)
+//           Text(
+//             statusText,
+//             style: const TextStyle(color: whiteFFFFFFColor, fontSize: 16),
+//           ),
+//         if (durationText != null)
+//           Row(
+//             children: [
+//               CircleAvatar(backgroundColor: Colors.red,
+//               radius: 6,
+//               ),
+//               SizedBox(width: 10,),
+//               Text(
+//                 durationText,
+//                 style: const TextStyle(color: whiteFFFFFFColor, fontSize: 14),
+//               ),
+//             ],
+//           ),
+//       ],
+//     ),
+//   );
+// }
+
+
+
+///
 
 //If you want, I can help you add tap-to-toggle between small/large local preview, or drag to reposition it—totally doable and feels native.
 //

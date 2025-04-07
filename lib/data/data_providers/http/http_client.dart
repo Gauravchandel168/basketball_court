@@ -40,7 +40,7 @@ class MyHttpClient {
     var url = Uri.parse(SIGN_UP_URL);
     final response = http.MultipartRequest('POST', url);
     response.headers.addAll({"Content-type": "application/json"});
-    response.files.add(await http.MultipartFile.fromPath("profile", img));
+   // response.files.add(await http.MultipartFile.fromPath("profile", img));
 
     response.fields.addAll({
       "email": signUpRequestModel.email ?? "",
@@ -88,9 +88,20 @@ class MyHttpClient {
     return await post(SIGN_IN_URL, token, body: body);
   }
 
+  Future<http.Response> getAgoraTokenChannel({required String userId, required String token}) async {
+    return await get(GET_AGORA_CREATE_CAHNNEL_TOKEN_URL(userId: userId),token
+
+    );
+  }
+
+  /// old project method all
+  ///
+
+
   Future<http.Response> getUserProfile(String token) async {
     return await get(GET_PROFILE_URL, token);
   }
+
 
   Future<http.Response> getAllLearning(String token) async {
     return await get(GET_ALL_LEARNING_URL, token);

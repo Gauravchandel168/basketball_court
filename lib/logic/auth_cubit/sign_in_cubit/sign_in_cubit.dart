@@ -8,6 +8,7 @@ import '../../../data/respositories/http_repository/auth_repository.dart';
 
 import '../../internet/internet_cubit.dart';
 import '../auth_token_store_cubit.dart';
+import '../user_hybrated_storage__cubit.dart';
 
 part 'sign_in_state.dart';
 
@@ -15,7 +16,9 @@ class SignInCubit extends Cubit<SignInState> {
   final InternetCubit internetCubit;
   final AuthRepository authRepository;
   final AuthTokenStoreCubit authTokenStoreCubit;
-  SignInCubit(this.internetCubit, this.authRepository, this.authTokenStoreCubit)
+  final UserHybratedStorageCubit userHybratedStorageCubit;
+
+  SignInCubit(this.internetCubit, this.authRepository, this.authTokenStoreCubit, this.userHybratedStorageCubit)
       : super(SignInInitial());
   signINMethod(String name, String password) async {
     final u = name.trim();
@@ -31,8 +34,14 @@ class SignInCubit extends Cubit<SignInState> {
         SignInResponse signInResponseModel = await authRepository.signInMethod(
             username: u, password: p, token: '');
         authTokenStoreCubit.setAuthToken(signInResponseModel.accessToken ?? "");
-
-        emit(SignInSuccess(signInResponseModel));
+        final user = signInResponseModel.user;
+        if(user != null) {
+          userHybratedStorageCubit.setUser(user);
+          emit(SignInSuccess());
+        }else{
+          emit(SignInError("Something went wrong!"));
+        }
+        emit(SignInSuccess());
       } on SigninException catch (e) {
         if (e.error?.toLowerCase() == "invalid credentials") {
           emit(SignInError(e.error!));

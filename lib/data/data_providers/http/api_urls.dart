@@ -1,5 +1,6 @@
-const String BASE_URL = "https://biblequiz-latest.onrender.com";
+//const String BASE_URL = "https://biblequiz-latest.onrender.com";
 //const String BASE_URL = "https://d61e-223-185-52-55.ngrok-free.app";
+const String BASE_URL = "https://viblyne.onrender.com";
 const String SIGN_UP_URL = BASE_URL + "/signup";
 const String SIGN_IN_URL = BASE_URL + "/signin";
 const String GET_PROFILE_URL = BASE_URL + "/profile";
@@ -17,4 +18,7 @@ String MARK_QUIZ_COMPLETED_URL({required String learningId, required quizId}) {
 
 String BUY_PRIZES_URL({required String prizeId}) {
   return "$BASE_URL/prizes/$prizeId/buy";
+}
+String GET_AGORA_CREATE_CAHNNEL_TOKEN_URL({required String userId}) {
+  return "$BASE_URL/agora/create/channel/${userId}";
 }
