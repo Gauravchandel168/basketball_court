@@ -1,29 +1,24 @@
+import 'dart:async'; // Add this
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../data/data_providers/http/custom_http_exception.dart';
+import '../presentation/routers/app_routers.dart';
+
 part 'agora_state.dart';
-
-// class AgoraCubit extends Cubit<AgoraState> {
-//   AgoraCubit() : super(AgoraInitial());
-// }
-
-// import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-//
-// import 'package:flutter_bloc/flutter_bloc.dart';
-//
-// import 'package:permission_handler/permission_handler.dart';
 
 class AgoraCubit extends Cubit<AgoraState> {
 
-  final String appId;
-
-  final String channelName;
-
-  final String token;
-
-  final int uid;
+  // final String appId;
+  //
+  // final String channelName;
+  //
+  // final String token;
+  //
+  // final int uid;
 
   RtcEngine? engine;
 
@@ -36,19 +31,28 @@ class AgoraCubit extends Cubit<AgoraState> {
   bool isVideoEnabled = false;
   bool isSwitchCamera = true;
 
-  AgoraCubit({
+  Timer? _callTimer;
+  Duration _callDuration = Duration.zero;
 
-    required this.appId,
+  Duration get callDuration => _callDuration;
+  AgoraCubit(
+      //{
 
-    required this.channelName,
+    // required this.appId,
+    //
+    // required this.channelName,
+    //
+    // required this.token,
+    //
+    // required this.uid,
 
-    required this.token,
+  //}
+  ) : super(AgoraInitial());
 
-    required this.uid,
-
-  }) : super(AgoraInitial());
-
-  Future<void> initialize() async {
+  Future<void> initialize({
+    required  String appId, required String channelName, required String token,
+    required int uid
+}) async {
 
     try {
 
@@ -75,15 +79,16 @@ class AgoraCubit extends Cubit<AgoraState> {
         RtcEngineEventHandler(
 
           onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+           // _startCallTimer();
+            print(" joined me");
 
-            emit(AgoraConnected(remoteUids: remoteUids));
-
+            emit(AgoraConnected(remoteUids: remoteUids, ));
           },
 
           onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
 
             remoteUids.add(remoteUid);
-
+            print(" joined other");
             emit(AgoraUserJoined(remoteUids: List.from(remoteUids)));
 
           },
@@ -91,6 +96,8 @@ class AgoraCubit extends Cubit<AgoraState> {
           onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
 
             remoteUids.remove(remoteUid);
+            leaveCall();
+            AppRouter.navigatorKey.currentState?.pop();
 
             emit(AgoraUserLeft(remoteUids: List.from(remoteUids)));
 
@@ -98,8 +105,12 @@ class AgoraCubit extends Cubit<AgoraState> {
 
           onError: (ErrorCodeType err, String msg) {
 
-            emit(AgoraError(message: 'Error: $err - $msg'));
-
+           //emit(AgoraError(message: 'Error: $err - $msg'));
+            if (ErrorCodeType is CustomHttpException) {
+              emit(AgoraError(message: 'Error: $err - $msg'));
+            } else {
+              emit(AgoraError(message:'Failed to join the call: ${err.toString()}-$msg'));
+            }
           },
 
         ),
@@ -127,8 +138,11 @@ class AgoraCubit extends Cubit<AgoraState> {
       );
 
     } catch (e) {
-
-      emit(AgoraError(message: 'Initialization failed: $e'));
+      if (e is CustomHttpException) {
+        emit(AgoraError(message:e.error));
+      } else {
+        emit(AgoraError(message:'Failed to join call: ${e.toString()}'));
+      }
 
     }
 
@@ -178,6 +192,7 @@ class AgoraCubit extends Cubit<AgoraState> {
     try {
 
       await engine?.leaveChannel();
+     // _stopCallTimer();
 
       remoteUids.clear();
 
@@ -185,8 +200,12 @@ class AgoraCubit extends Cubit<AgoraState> {
 
     } catch (e) {
 
-      emit(AgoraError(message: 'Error leaving call: $e'));
-
+      //emit(AgoraError(message: 'Error leaving call: $e'));
+      if (e is CustomHttpException) {
+        emit(AgoraError(message:e.error));
+      } else {
+        emit(AgoraError(message:'Failed to leave the call: ${e.toString()}'));
+      }
     }
 
   }
@@ -196,9 +215,23 @@ class AgoraCubit extends Cubit<AgoraState> {
   Future<void> close() async {
 
     await engine?.release();
+    //_stopCallTimer();
 
     super.close();
 
   }
+  // Future<void> _startCallTimer() async {
+  //   _callDuration = Duration.zero;
+  //   _callTimer = Timer.periodic(Duration(seconds: 1), (_) {
+  //     _callDuration += Duration(seconds: 1);
+  //     emit(AgoraCallDurationUpdated(duration: _callDuration));
+  //   });
+  // }
+
+  // Future<void> _stopCallTimer() async {
+  //   _callTimer?.cancel();
+  //   _callTimer = null;
+  //   _callDuration = Duration.zero;
+  // }
 
 }

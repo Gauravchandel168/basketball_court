@@ -17,4 +17,6 @@ const Color blue242B42Color=Color(0xFF242B42);
 const Color blue0E4347Color=Color(0xFF0E4347);
 const Color green2EC35FColor=Color(0xFF2EC35F);
 const Color redE74C3CColor=Color(0xFFE74C3C);
+const Color darkBlue242B42CColor=Color(0xFF242B42);
+//darkBlue242B42Color
 //#F6F7FA#F5F5FFB2

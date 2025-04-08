@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/model/auth_model/get_agora_token_and_channel_model.dart';
 import '../../data/respositories/http_repository/auth_repository.dart';
+import '../../logic/agora_cubit.dart';
 import '../../logic/auth_cubit/auth_token_store_cubit.dart';
 import '../../logic/auth_cubit/get_agora_token_channel_cubit.dart';
 import '../../logic/auth_cubit/sign_in_cubit/sign_in_cubit.dart';
@@ -114,13 +115,20 @@ class AppRouter {
   }
 
   static _forgetPasswordScreen() {
-    return MaterialPageRoute(builder: (context) => BlocProvider(
+    return MaterialPageRoute(builder: (context) => MultiBlocProvider(
+  providers: [
+    BlocProvider(
   create: (context) => GetAgoraTokenChannelCubit(
     context.read<AuthRepository>(),
     context.read<InternetCubit>(),
     context.read<AuthTokenStoreCubit>(),
     context.read<UserHybratedStorageCubit>(),
   ),
+),
+    BlocProvider(
+      create: (context) => AgoraCubit(),
+    ),
+  ],
   child: ForgetPasswordScreen(),
 ));
   }

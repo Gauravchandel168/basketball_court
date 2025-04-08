@@ -15,11 +15,17 @@ class AgoraLoading extends AgoraState {}
 class AgoraConnected extends AgoraState {
 
   final List<int> remoteUids;
+  //final Duration callDuration;
 
-   AgoraConnected({required this.remoteUids});
+   AgoraConnected( {required this.remoteUids,});
 
 
 }
+// class AgoraCallDurationUpdated extends AgoraState {
+//   final Duration duration;
+//
+//   AgoraCallDurationUpdated({required this.duration});
+// }
 
 class AgoraUserJoined extends AgoraState {
 
