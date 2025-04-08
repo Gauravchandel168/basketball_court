@@ -51,6 +51,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
 final state = context.watch<GetAgoraTokenChannelCubit>().state;
+// final agoraSate = context.watch<AgoraCubit>().state;
+// final cubit = context.read<AgoraCubit>();
 
   return GestureDetector(
     onTap: () {
@@ -156,7 +158,45 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
 
                // cubit.remoteUids.isEmpty?
                //  const SizedBox.shrink():
-                inComingCallDialog()
+               //  BlocConsumer<AgoraCubit, AgoraState>(
+               //    listener: (context, state) {
+               //      if (state is AgoraUserJoined && state.remoteUids.isNotEmpty) {
+               //        showDialog(
+               //          context: context,
+               //          barrierDismissible: false,
+               //          builder: (context) => IncomingCallBanner(
+               //            callerName: 'Caller ${state.remoteUids.first}', // customize if needed
+               //            callerAvatarUrl: '', // you can add user profile image here
+               //            onAccept: () {
+               //              AppRouter.navigatorKey.currentState?.pop(); // Close dialog
+               //            },
+               //            onDecline: () {
+               //              context.read<AgoraCubit>().leaveCall(); // Leave call
+               //              AppRouter.navigatorKey.currentState?.pop(); // Close dialog
+               //            },
+               //          ),
+               //        );
+               //      }
+               //    },
+               //    builder: (context, state) {
+               //      return Scaffold(
+               //        appBar: AppBar(title: Text("Agora Call")),
+               //        body: Center(
+               //          child: Text("Waiting for someone to join..."),
+               //        ),
+               //      );
+               //    },
+               //  ),
+
+                // IncomingCallBanner(callerName: 'Saakar',
+                //                callerAvatarUrl: '',
+                //                onAccept: () {
+                //
+                //                },
+                //                onDecline: () {  },
+                //              )
+
+               //  inComingCallDialog()
 
 
                 // CommonElevatedButton("Call", () {
@@ -208,79 +248,103 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
         ),
     ));
   }
-  Widget inComingCallDialog(){
-   return BlocConsumer<AgoraCubit, AgoraState>(
-
-      listener: (context, state) {
-
-        if (state is AgoraError) {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-
-            SnackBar(content:
-            Text(state.message,
-                style: GoogleFonts.plusJakartaSans(
-                  textStyle:
-                  const TextStyle(fontSize: 14,
-                      fontWeight: bold,
-                      color: whiteFFFFFFColor),
-                )),
-            ),
-
-          );
-
-        }
-
-      },
-
-      builder: (context, state) {
-
-        final cubit = context.read<AgoraCubit>();
-
-        if (state is AgoraInitial || state is AgoraLoading) {
-
-          return
-            // const Center(child: CircularProgressIndicator());
-            Center(
-              child: Text("Saakar calling...",
-                  style: GoogleFonts.plusJakartaSans(
-                    textStyle:
-                    const TextStyle(fontSize: 19,
-                        fontWeight: thick,
-                        color: blackFF101010Color),
-                  )),
-            );
-
-        }
-
-        return Column(
-
-          children: [
-
-
-
-
-            cubit.remoteUids.isEmpty?
-            const SizedBox.shrink():
-            IncomingCallBanner(callerName: 'Saakar',
-              callerAvatarUrl: '',
-              onAccept: () {
-
-              },
-              onDecline: () {  },
-            ),
-
-
-          ],
-
-        );
-
-      },
-
-    );
-
-
-  }
+  // Widget inComingCallDialog(){
+  //  return
+  //
+  //    BlocProvider(
+  //
+  //      create: (context) => AgoraCubit(
+  //        // appId: widget.agoraTokenModel.appId ?? "",
+  //        // channelName: widget.agoraTokenModel.channelId ?? "",
+  //        // token: widget.agoraTokenModel.token ?? "",
+  //        // uid: 0,
+  //
+  //      )..initialize(
+  //          appId: "dee7af634433419e96023a393890962c",
+  //          channelName: "81477d7d-6d5b-49dc-8645-b30e13107e70",
+  //          token: "006dee7af634433419e96023a393890962cIADiGwSOFXdUZElzjNNoXitV8JF0is2Hcf10hFlUl0BfaTN6nb4AAAAAIgAKOiYCSs/2ZwQAAQDqmfVnAgDqmfVnAwDqmfVnBADqmfVn",
+  //          uid: 0
+  //      ),
+  //
+  //      child: Scaffold(
+  //        backgroundColor:
+  //        //Colors.transparent,
+  //        Colors.white,
+  //        //Colors.black,
+  //        body:  BlocConsumer<AgoraCubit, AgoraState>(
+  //
+  //          listener: (context, state) {
+  //
+  //            if (state is AgoraError) {
+  //
+  //              ScaffoldMessenger.of(context).showSnackBar(
+  //
+  //                SnackBar(content:
+  //                Text(state.message,
+  //                    style: GoogleFonts.plusJakartaSans(
+  //                      textStyle:
+  //                      const TextStyle(fontSize: 14,
+  //                          fontWeight: bold,
+  //                          color: whiteFFFFFFColor),
+  //                    )),
+  //                ),
+  //
+  //              );
+  //
+  //            }
+  //
+  //          },
+  //
+  //          builder: (context, state) {
+  //
+  //            final cubit = context.read<AgoraCubit>();
+  //
+  //            if (state is AgoraInitial || state is AgoraLoading) {
+  //
+  //              return
+  //                // const Center(child: CircularProgressIndicator());
+  //                Center(
+  //                  child: Text("Saakar calling...",
+  //                      style: GoogleFonts.plusJakartaSans(
+  //                        textStyle:
+  //                        const TextStyle(fontSize: 19,
+  //                            fontWeight: thick,
+  //                            color: blackFF101010Color),
+  //                      )),
+  //                );
+  //
+  //            }
+  //
+  //            return Column(
+  //
+  //              children: [
+  //
+  //                cubit.remoteUids.isEmpty?
+  //                const SizedBox.shrink():
+  //                IncomingCallBanner(callerName: 'Saakar',
+  //                  callerAvatarUrl: '',
+  //                  onAccept: () {
+  //
+  //                  },
+  //                  onDecline: () {  },
+  //                ),
+  //
+  //
+  //              ],
+  //
+  //            );
+  //
+  //          },
+  //
+  //        ),
+  //
+  //      ),
+  //
+  //
+  //    );
+  //
+  //
+  // }
 
   Widget _userData(BuildContext context, GetAgoraTokenChannelState state, ) {
     if (state is GetAgoraTokenChannelSuccess) {
@@ -399,6 +463,7 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
          channelId:"81477d7d-6d5b-49dc-8645-b30e13107e70",
          // token: state.getAgoraTokenAndChannelModel.token??"",
           token: "006dee7af634433419e96023a393890962cIADiGwSOFXdUZElzjNNoXitV8JF0is2Hcf10hFlUl0BfaTN6nb4AAAAAIgAKOiYCSs/2ZwQAAQDqmfVnAgDqmfVnAwDqmfVnBADqmfVn",
+
           userName: userData.name,
           )
         );
