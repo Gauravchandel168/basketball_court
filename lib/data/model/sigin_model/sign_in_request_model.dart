@@ -7,7 +7,8 @@ String signInRequestModelToJson(SignInRequestModel data) => json.encode(data.toJ
 class SignInRequestModel {
   SignInRequestModel({
       String? password, 
-      String? username,}){
+      String? username,})
+  {
     _password = password;
     _username = username;
 }

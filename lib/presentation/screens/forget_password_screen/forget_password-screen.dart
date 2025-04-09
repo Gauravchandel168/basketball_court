@@ -37,7 +37,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       color: Colors.lightGreen,
     ),
   ];
-
+  Map<UserData, dynamic> scores = {
+    UserData(
+      name: "Saakar",
+      phnNumber: "+91  1712700224 |  India, Haryana  ",
+      color: Colors.orangeAccent,
+    ):"fgh",
+  };
   @override
   void initState() {
     super.initState();
@@ -75,18 +81,31 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
                 AppRouter.navigatorKey.currentState?.pop();
                 AppRouter.navigatorKey.currentState?.pop();
               },
-              child:Icon(Icons.arrow_back_ios,
+              child:const Icon(Icons.arrow_back_ios,
                 color: whiteFFFFFFColor,
               ),
-              // SvgPicture.asset(
-              //   fit: BoxFit.cover,
-              //   "$svgAssetsBasePath/back_arrow.svg",
-              // ),
             ),
+            actions:  [
+             const Icon(Icons.notifications,
+                color: green2EC35FColor,
+              ),
+              InkWell(
+                onTap: (){
+                  AppRouter.navigatorKey.currentState?.pushNamed(
+                      AppRouter.notificationScreen,
+                  );
+                },
+                child: const Icon(Icons.notifications,
+                  color: whiteFFFFFFColor,
+                ),
+              ), const Icon(Icons.notifications,
+                color: green2EC35FColor,
+              ),
+            ],
             title: Text(
               "Call Room",
               style: GoogleFonts.plusJakartaSans(
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   fontSize: 16,
                   fontWeight: bold,
                   color: whiteFFFFFFColor,
@@ -96,12 +115,12 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
             ),
           ),
           body: Padding(
-            padding: EdgeInsets.only(left: 15, right: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 35),
+                const SizedBox(height: 35),
                 // Text("Email Address",
                 //     style: GoogleFonts.plusJakartaSans(
                 //       textStyle: const TextStyle(
@@ -153,7 +172,7 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
                 //     suffix: false,
                 //   ),
                 SearchField(context),
-                SizedBox(height: 35),
+                const SizedBox(height: 35),
                 _userData(context, state),
 
                // cubit.remoteUids.isEmpty?
@@ -424,7 +443,7 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
       style: GoogleFonts.plusJakartaSans(
         textStyle: const TextStyle(fontWeight: normal, fontSize: 14),
       ),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         hintText: "Search",
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -448,22 +467,23 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
       contentPadding: EdgeInsets.zero,
 
       onTap: () {
-//         print(state.getAgoraTokenAndChannelModel.token);
-//         print(state.getAgoraTokenAndChannelModel.channelId);
-// print("token");
+        print(state.getAgoraTokenAndChannelModel.token);
+        print(state.getAgoraTokenAndChannelModel.channelId);
+print("token");
         _requestPermissions();
         AppRouter.navigatorKey.currentState?.pushNamed(
           AppRouter.videoCallScreen,
           arguments: AgoraTokenModel(
+            ///expire token
          //  appId: "dee7af634433419e96023a393890962c",
             // channelId: "dd4f9a6a-e870-4d18-9757-dbc052196c78",
-            // token: "007eJxTYEjYGRVZc0/VJepL5j2eaSGd7w8adqt8k9ksbpAicljNR12BISU11TwxzczYxMTY2MTQMtXSzMDIONHY0tjC0sDSzCj5d8HX9IZARoZ9l18yMTJAIIivwpCSYpJmmWiWqJtqYW6ga5JiaKFraW5qrpuSlGxgamRoaZZsbsHAAABnVSbM",
+            token: "007eJxTYDgwc1XqCkYFX2kOMYHk9r+7Gm7n1Sw+dOHfL8HYD3/C1FsUGFJSU80T08yMTUyMjU0MLVMtzQyMjBONLY0tLA0szYySdaS/pTcEMjKsPniXgREKQXwVhuREIzNTCwNTXctUE2NdEwvDFF3LpFQjXWOD5MRkc/PE5GTDJAYGANGTJ9o=",
+           ///
             appId: state.getAgoraTokenAndChannelModel.appId ??"",
-       //  channelId: state.getAgoraTokenAndChannelModel.channelId ??"",
-         channelId:"81477d7d-6d5b-49dc-8645-b30e13107e70",
-         // token: state.getAgoraTokenAndChannelModel.token??"",
-          token: "006dee7af634433419e96023a393890962cIADiGwSOFXdUZElzjNNoXitV8JF0is2Hcf10hFlUl0BfaTN6nb4AAAAAIgAKOiYCSs/2ZwQAAQDqmfVnAgDqmfVnAwDqmfVnBADqmfVn",
-
+        // channelId: state.getAgoraTokenAndChannelModel.channelId ??"",
+         channelId:"ca265805-9e43-481d-9be2-30cac77acc1b",
+        //  token: state.getAgoraTokenAndChannelModel.token??"",
+        //  token: "006dee7af634433419e96023a393890962cIAAIGtMWBy+6mORzm4FIGS+ON6YREE/G1r0Q7cg2ntzKgWIZk3cAAAAAIgC6QCMAgGv3ZwQAAQAgNvZnAgAgNvZnAwAgNvZnBAAgNvZn",
           userName: userData.name,
           )
         );
@@ -473,7 +493,7 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
       leading: CircleAvatar(
         backgroundColor: userData.color ?? greyD6D6D6Color,
         radius: 25,
-        child: Icon(Icons.person,
+        child: const Icon(Icons.person,
         color: blackFF101010Color,
         ),
       ),
@@ -497,7 +517,7 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
           ),
         ),
       ),
-      trailing: Icon(Icons.call, color: green2EC35FColor, size: 30),
+      trailing: const Icon(Icons.call, color: green2EC35FColor, size: 30),
     );
   }
   Future<void> _requestPermissions() async {

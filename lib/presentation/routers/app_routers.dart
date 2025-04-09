@@ -20,6 +20,7 @@ import '../screens/login_Screen/login_screen.dart';
 import '../screens/new_password_screen/new_password_screen.dart';
 import '../screens/new_app/new_app.dart';
 
+import '../screens/notification_screen/notification_screen.dart';
 import '../screens/otp/otpScreen.dart';
 import '../screens/signUp_screen/signUp_screen.dart';
 import '../screens/video_call/video_call.dart';
@@ -45,6 +46,7 @@ class AppRouter {
 
   /// video screen for testing
   static const String videoCallScreen = "/videoCallScreen";
+  static const String notificationScreen = "/notificationScreen";
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -70,6 +72,8 @@ class AppRouter {
       /// video screen for testing
       case videoCallScreen:
         return _videoCallScreen(settings.arguments as AgoraTokenModel);
+  case notificationScreen:
+        return _notificationScreen();
 
       default:
         throw Exception("Route was not Found");
@@ -164,6 +168,15 @@ class AppRouter {
                     VideoCubit(),
             child: VideoCallPage(agoraTokenModel: agoraTokenModel),
           ),
+    );
+  }
+  static _notificationScreen() {
+    return MaterialPageRoute(
+      builder:
+          (context) =>  BlocProvider(
+  create: (context) => AgoraCubit(),
+  child: NotificationScreen(),
+),
     );
   }
 }

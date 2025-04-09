@@ -112,6 +112,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/font_weight.dart';
 import '../../../logic/agora_cubit.dart';
+import '../../../logic/auth_cubit/user_hybrated_storage__cubit.dart';
 import '../forget_password_screen/widget/agoraTokenmodel.dart';
 
 
@@ -127,7 +128,7 @@ class VideoCallPage extends StatefulWidget {
 }
 
 class _VideoCallPageState extends State<VideoCallPage> {
-
+bool isFull=true;
   @override
   void initState() {
     super.initState();
@@ -143,13 +144,11 @@ class _VideoCallPageState extends State<VideoCallPage> {
   Widget build(BuildContext context) {
 
     return BlocProvider(
-
       create: (context) => AgoraCubit(
         // appId: widget.agoraTokenModel.appId ?? "",
         // channelName: widget.agoraTokenModel.channelId ?? "",
         // token: widget.agoraTokenModel.token ?? "",
         // uid: 0,
-
       )..initialize(
         appId: widget.agoraTokenModel.appId ?? "",
         channelName: widget.agoraTokenModel.channelId ?? "",
@@ -206,114 +205,200 @@ class _VideoCallPageState extends State<VideoCallPage> {
 
               }
 
-              return Stack(
+              return InkWell(
+                onTap: (){
+                  setState(() {
+                    isFull=! isFull;
 
-                children: [
+                  });
+                },
+                child: Stack(
 
-                  // Remote video views
-                  _buildRemoteVideo(cubit),
+                  children: [
+
+                    // Remote video views
+                   // isFull?
+                    //_buildRemoteVideo(cubit,isFull):
+                   (cubit.remoteUids.isEmpty) ?
+                  AgoraVideoView(
+
+                    controller: VideoViewController(
+
+                      rtcEngine: cubit.engine!,
+
+                      canvas: const VideoCanvas(uid: 0),
+
+                    ),
+
+                  )
+
+                // Center(
+                //   child: Text("calling...",
+                //       style: GoogleFonts.plusJakartaSans(
+                //         textStyle:
+                //         const TextStyle(fontSize: 14,
+                //             fontWeight: bold,
+                //             color: blackFF101010Color),
+                //       )),
+                // );
+              : isFull?
+                   AgoraVideoView(
+
+              controller: VideoViewController.remote(
+
+              rtcEngine: cubit.engine!,
+
+              canvas: VideoCanvas(uid: cubit.remoteUids.first),
+
+              connection: RtcConnection(channelId: widget.agoraTokenModel.channelId??""),
+
+              ),
+
+              ):
+
+              Positioned(
+
+              bottom: 130,
+
+              right: 20,
+
+              width: 100,
+
+              height: 150,
+
+              child: Container(
+              decoration: BoxDecoration(
+              border: Border.all(color: whiteFFFFFFColor, width: 2),
+              ),
+              width: 140,
+              height: 160,
+              child: AgoraVideoView(
+
+              controller: VideoViewController.remote(
+
+              rtcEngine: cubit.engine!,
+
+              canvas: VideoCanvas(uid: cubit.remoteUids.first),
+
+              connection: RtcConnection(channelId: widget.agoraTokenModel.channelId??""),
+
+              ),
+
+              ),
+              ),
+
+              ),
 
 
-                 // Local video view
 
-                  // cubit.remoteUids.isNotEmpty?
-                  //
-                  //
-                  // const SizedBox.shrink():
-                  cubit.remoteUids.isEmpty?
-                  const SizedBox.shrink():
-                  Positioned(
 
-                    bottom: 130,
+                   // Local video view
 
-                    right: 20,
+                    cubit.remoteUids.isEmpty?
+                    const SizedBox.shrink():
+                    isFull?Positioned(
 
-                    width: 100,
+                      bottom: 130,
 
-                    height: 150,
+                      right: 20,
 
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: whiteFFFFFFColor, width: 2),
-                      ),
-                      width: 140,
-                      height: 160,
-                      child: AgoraVideoView(
+                      width: 100,
 
-                        controller: VideoViewController(
+                      height: 150,
 
-                          rtcEngine: cubit.engine!,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: whiteFFFFFFColor, width: 2),
+                        ),
+                        width: 140,
+                        height: 160,
+                        child: AgoraVideoView(
 
-                          canvas: const VideoCanvas(uid: 0),
+                          controller: VideoViewController(
+
+                            rtcEngine: cubit.engine!,
+
+                            canvas: const VideoCanvas(uid: 0),
+
+                          ),
 
                         ),
+                      ),
+
+                    ):AgoraVideoView(
+
+                      controller: VideoViewController(
+
+                        rtcEngine: cubit.engine!,
+
+                        canvas: const VideoCanvas(uid: 0),
 
                       ),
+
                     ),
 
-                  ),
+                    Positioned(
 
-                  Positioned(
+                      bottom: 20,
 
-                    bottom: 20,
+                      left: 0,
 
-                    left: 0,
+                      right: 0,
 
-                    right: 0,
+                      child: _buildControlButtons(cubit),
 
-                    child: _buildControlButtons(cubit),
-
-                  ),
-                  Positioned(
-                    top: 60,
-                    right: 10,
-                    child: _controlButton(
-                      iconOn: CupertinoIcons.switch_camera_solid,
-                      iconOff: CupertinoIcons.switch_camera_solid,
-                      isToggled: cubit.isSwitchCamera,
-                      onTap: cubit.switchCamera,
-                        backgroundColor: blackFF101010Color,
-                      iconColor: whiteFFFFFFColor
                     ),
-                  ),
-                  cubit.remoteUids.isEmpty?  Align(
-
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 25.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            widget.agoraTokenModel.userName??"",
-                            style: GoogleFonts.plusJakartaSans(
-                              textStyle: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: thick,
-                                color: blackFF101010Color,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "Ringing...",
-                            style: GoogleFonts.plusJakartaSans(
-                              textStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: bold,
-                                color: blackFF101010Color,
-
-                              ),
-                            ),
-                          ),
-                        ],
+                    Positioned(
+                      top: 60,
+                      right: 10,
+                      child: _controlButton(
+                        iconOn: CupertinoIcons.switch_camera_solid,
+                        iconOff: CupertinoIcons.switch_camera_solid,
+                        isToggled: cubit.isSwitchCamera,
+                        onTap: cubit.switchCamera,
+                          backgroundColor: blackFF101010Color,
+                        iconColor: whiteFFFFFFColor
                       ),
                     ),
-                  ):
-                      SizedBox.shrink(),
-                //  _buildStatusAndDuration(state)
-                ],
+                    cubit.remoteUids.isEmpty?  Align(
 
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 25.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.agoraTokenModel.userName??"",
+                              style: GoogleFonts.plusJakartaSans(
+                                textStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: thick,
+                                  color: blackFF101010Color,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "Ringing...",
+                              style: GoogleFonts.plusJakartaSans(
+                                textStyle: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: bold,
+                                  color: blackFF101010Color,
+
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ):
+                        SizedBox.shrink(),
+                  //  _buildStatusAndDuration(state)
+                  ],
+
+                ),
               );
 
             },
@@ -356,7 +441,7 @@ class _VideoCallPageState extends State<VideoCallPage> {
   //     ),
   //   );
   // }
-  Widget _buildRemoteVideo(AgoraCubit cubit) {
+  Widget _buildRemoteVideo(AgoraCubit cubit, bool isFull) {
 
     if (cubit.remoteUids.isEmpty) {
 
@@ -382,7 +467,8 @@ class _VideoCallPageState extends State<VideoCallPage> {
       //       )),
       // );
     }else{
-      return AgoraVideoView(
+
+      return isFull?AgoraVideoView(
 
         controller: VideoViewController.remote(
 
@@ -394,7 +480,41 @@ class _VideoCallPageState extends State<VideoCallPage> {
 
         ),
 
-      );
+      ):
+
+    Positioned(
+
+    bottom: 130,
+
+    right: 20,
+
+    width: 100,
+
+    height: 150,
+
+    child: Container(
+    decoration: BoxDecoration(
+    border: Border.all(color: whiteFFFFFFColor, width: 2),
+    ),
+    width: 140,
+    height: 160,
+    child: AgoraVideoView(
+
+    controller: VideoViewController.remote(
+
+    rtcEngine: cubit.engine!,
+
+    canvas: VideoCanvas(uid: cubit.remoteUids.first),
+
+    connection: RtcConnection(channelId: widget.agoraTokenModel.channelId??""),
+
+    ),
+
+    ),
+    ),
+
+    );
+
     }
 
 
