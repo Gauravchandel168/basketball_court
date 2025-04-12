@@ -42,13 +42,20 @@ class SignInCubit extends Cubit<SignInState> {
           emit(SignInError("Something went wrong!"));
         }
         emit(SignInSuccess());
+        print("state");
+        print(state);
+
       } on SigninException catch (e) {
+
         if (e.error?.toLowerCase() == "invalid credentials") {
           emit(SignInError(e.error!));
         } else {
           emit(SignInError("Something went wrong. Please try again."));
         }
       } catch (e) {
+
+print("object");
+print(e.toString());
 
         emit(SignInError("Something went wrong. Please try again."));
       }

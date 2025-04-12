@@ -3,7 +3,6 @@ import 'package:basketball/logic/video_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/model/auth_model/get_agora_token_and_channel_model.dart';
 import '../../data/respositories/http_repository/auth_repository.dart';
 import '../../logic/agora_cubit.dart';
 import '../../logic/auth_cubit/auth_token_store_cubit.dart';
@@ -12,6 +11,7 @@ import '../../logic/auth_cubit/sign_in_cubit/sign_in_cubit.dart';
 import '../../logic/auth_cubit/sign_up_cubit/sign_up_cubit.dart';
 import '../../logic/internet/internet_cubit.dart';
 import '../screens/change_password_screen/change_password_screen.dart';
+import '../screens/chat_screen/chat_screen.dart';
 import '../screens/dashbord_screen/dash_board_screen.dart';
 import '../screens/forget_password_screen/forget_password-screen.dart';
 import '../screens/forget_password_screen/widget/agoraTokenmodel.dart';
@@ -23,15 +23,14 @@ import '../screens/new_app/new_app.dart';
 import '../screens/notification_screen/notification_screen.dart';
 import '../screens/otp/otpScreen.dart';
 import '../screens/signUp_screen/signUp_screen.dart';
-import '../screens/video_call/video_call.dart';
 import '../screens/video_call/video_call_screen.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
-  static const String signUp = "/";
+  static const String signUp = "/signUp";
 
-  static const String logInScreen = "/logInScreen";
+  static const String logInScreen = "/";
 
   static const String dashBoardScreen = "/dashBoardScreen";
 
@@ -46,6 +45,7 @@ class AppRouter {
 
   /// video screen for testing
   static const String videoCallScreen = "/videoCallScreen";
+  static const String chatScreen = "/chatScreen";
   static const String notificationScreen = "/notificationScreen";
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -72,7 +72,9 @@ class AppRouter {
       /// video screen for testing
       case videoCallScreen:
         return _videoCallScreen(settings.arguments as AgoraTokenModel);
-  case notificationScreen:
+  case chatScreen:
+        return _chatScreen(settings.arguments as AgoraTokenModel);
+        case notificationScreen:
         return _notificationScreen();
 
       default:
@@ -168,6 +170,19 @@ class AppRouter {
                     VideoCubit(),
             child: VideoCallPage(agoraTokenModel: agoraTokenModel),
           ),
+    );
+  }
+  static _chatScreen(AgoraTokenModel agoraTokenModel) {
+//     return MaterialPageRoute(
+//       builder:
+//           (context) =>   BlocProvider(
+//   create: (context) => ChatCubit(appId: agoraTokenModel.appId, channelId: agoraTokenModel.channelId),
+//   child: const UserChatScreen(),
+// ),
+//     );
+    return MaterialPageRoute(
+      builder:
+          (context) =>   const ChatScreen(),
     );
   }
   static _notificationScreen() {

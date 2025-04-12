@@ -391,44 +391,46 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
     }
     else if (state is GetAgoraTokenChannelError) {
       return Expanded(
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                state.message,
-                style: GoogleFonts.poppins(
-                  textStyle: const TextStyle(
-                    color: green2EC35FColor,
-                    fontWeight: medium,
-                    fontSize: 20,
+        child: Center(
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  state.message,
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      color: green2EC35FColor,
+                      fontWeight: medium,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    _hitInfoApi();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 5.4,
-                    fixedSize: const Size(140, 50),
-                    backgroundColor: Colors.green, // Background color
-                  ),
-                  child: Text(
-                    'Retry',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        color: green2EC35FColor,
-                        fontWeight: medium,
-                        fontSize: 20,
-                      ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _hitInfoApi();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 5.4,
+                      fixedSize: const Size(140, 50),
+                      backgroundColor: Colors.green, // Background color
                     ),
-                  ))
-            ]),
+                    child: Text(
+                      'Retry',
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                          color: whiteFFFFFFColor,
+                          fontWeight: medium,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ))
+              ]),
+        ),
       );
     } else {
       return SizedBox.fromSize();
@@ -472,21 +474,38 @@ final state = context.watch<GetAgoraTokenChannelCubit>().state;
 print("token");
         _requestPermissions();
         AppRouter.navigatorKey.currentState?.pushNamed(
-          AppRouter.videoCallScreen,
-          arguments: AgoraTokenModel(
-            ///expire token
-         //  appId: "dee7af634433419e96023a393890962c",
-            // channelId: "dd4f9a6a-e870-4d18-9757-dbc052196c78",
-            token: "007eJxTYDgwc1XqCkYFX2kOMYHk9r+7Gm7n1Sw+dOHfL8HYD3/C1FsUGFJSU80T08yMTUyMjU0MLVMtzQyMjBONLY0tLA0szYySdaS/pTcEMjKsPniXgREKQXwVhuREIzNTCwNTXctUE2NdEwvDFF3LpFQjXWOD5MRkc/PE5GTDJAYGANGTJ9o=",
-           ///
-            appId: state.getAgoraTokenAndChannelModel.appId ??"",
-        // channelId: state.getAgoraTokenAndChannelModel.channelId ??"",
-         channelId:"ca265805-9e43-481d-9be2-30cac77acc1b",
-        //  token: state.getAgoraTokenAndChannelModel.token??"",
-        //  token: "006dee7af634433419e96023a393890962cIAAIGtMWBy+6mORzm4FIGS+ON6YREE/G1r0Q7cg2ntzKgWIZk3cAAAAAIgC6QCMAgGv3ZwQAAQAgNvZnAgAgNvZnAwAgNvZnBAAgNvZn",
-          userName: userData.name,
-          )
+            AppRouter.chatScreen,
+            arguments: AgoraTokenModel(
+              ///expire token
+           //  appId: "dee7af634433419e96023a393890962c",
+              // channelId: "dd4f9a6a-e870-4d18-9757-dbc052196c78",
+              token: "007eJxTYDgwc1XqCkYFX2kOMYHk9r+7Gm7n1Sw+dOHfL8HYD3/C1FsUGFJSU80T08yMTUyMjU0MLVMtzQyMjBONLY0tLA0szYySdaS/pTcEMjKsPniXgREKQXwVhuREIzNTCwNTXctUE2NdEwvDFF3LpFQjXWOD5MRkc/PE5GTDJAYGANGTJ9o=",
+             ///
+              appId: state.getAgoraTokenAndChannelModel.appId ??"",
+          // channelId: state.getAgoraTokenAndChannelModel.channelId ??"",
+           channelId:"ca265805-9e43-481d-9be2-30cac77acc1b",
+          //  token: state.getAgoraTokenAndChannelModel.token??"",
+          //  token: "006dee7af634433419e96023a393890962cIAAIGtMWBy+6mORzm4FIGS+ON6YREE/G1r0Q7cg2ntzKgWIZk3cAAAAAIgC6QCMAgGv3ZwQAAQAgNvZnAgAgNvZnAwAgNvZnBAAgNvZn",
+            userName: userData.name,
+            )
         );
+
+        // AppRouter.navigatorKey.currentState?.pushNamed(
+        //   AppRouter.videoCallScreen,
+        //   arguments: AgoraTokenModel(
+        //     ///expire token
+        //  //  appId: "dee7af634433419e96023a393890962c",
+        //     // channelId: "dd4f9a6a-e870-4d18-9757-dbc052196c78",
+        //     token: "007eJxTYDgwc1XqCkYFX2kOMYHk9r+7Gm7n1Sw+dOHfL8HYD3/C1FsUGFJSU80T08yMTUyMjU0MLVMtzQyMjBONLY0tLA0szYySdaS/pTcEMjKsPniXgREKQXwVhuREIzNTCwNTXctUE2NdEwvDFF3LpFQjXWOD5MRkc/PE5GTDJAYGANGTJ9o=",
+        //    ///
+        //     appId: state.getAgoraTokenAndChannelModel.appId ??"",
+        // // channelId: state.getAgoraTokenAndChannelModel.channelId ??"",
+        //  channelId:"ca265805-9e43-481d-9be2-30cac77acc1b",
+        // //  token: state.getAgoraTokenAndChannelModel.token??"",
+        // //  token: "006dee7af634433419e96023a393890962cIAAIGtMWBy+6mORzm4FIGS+ON6YREE/G1r0Q7cg2ntzKgWIZk3cAAAAAIgC6QCMAgGv3ZwQAAQAgNvZnAgAgNvZnAwAgNvZnBAAgNvZn",
+        //   userName: userData.name,
+        //   )
+        // );
 
       },
 

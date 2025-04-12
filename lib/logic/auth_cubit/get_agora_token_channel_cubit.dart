@@ -26,6 +26,8 @@ class GetAgoraTokenChannelCubit extends Cubit<GetAgoraTokenChannelState> {
         emit(GetAgoraTokenChannelLoading());
         AuthTokenModel authTokenModel =
         authTokenModelFromJson(authTokenStoreCubit.state ?? "");
+        print(userHybratedStorageCubit.state?.id??"");
+        print("userHybratedStorageCubit.state?.id??""");
         final GetAgoraTokenAndChannelModel getAgoraTokenAndChannelModel =
         await authRepository.getAgoraTokenChannel( userId: userHybratedStorageCubit.state?.id??"",
         token: authTokenModel.token ?? "");
@@ -41,7 +43,7 @@ class GetAgoraTokenChannelCubit extends Cubit<GetAgoraTokenChannelState> {
         if (e is CustomHttpException) {
           emit(GetAgoraTokenChannelError(e.error));
         } else {
-          emit(GetAgoraTokenChannelError("Something went wrong"));
+          emit(GetAgoraTokenChannelError("Something went wrong!"));
         }
       }
     }
